@@ -29,7 +29,7 @@ export default function LoginPage() {
   }
 
   return (
-    <main className="flex flex-1 flex-col items-center justify-center px-6 safe-top safe-bottom">
+    <main className="flex flex-1 flex-col items-center overflow-y-auto px-6 pt-24 safe-top safe-bottom">
       <div className="w-full max-w-xs text-center">
         <div className="mb-8 text-3xl">🦋</div>
         <h1 className="mb-1 text-xl font-semibold">Budget</h1>

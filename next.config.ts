@@ -1,7 +1,8 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  // Allows loading the dev server from a phone on the same LAN for testing.
+  allowedDevOrigins: ["192.168.86.41"],
 };
 
 export default nextConfig;
