@@ -83,6 +83,7 @@ export function IncomeView({
                   dataKey={source}
                   stackId="income"
                   fill={colors[source]}
+                  isAnimationActive={false}
                   radius={i === data.sources.length - 1 ? [4, 4, 0, 0] : 0}
                 />
               ))}

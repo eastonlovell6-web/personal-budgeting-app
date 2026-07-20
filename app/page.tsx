@@ -12,7 +12,7 @@ import { isoDate } from "@/lib/format";
 import { IncomeView } from "@/components/income/IncomeView";
 import { SpendingView } from "@/components/spending/SpendingView";
 import { CashflowView } from "@/components/cashflow/CashflowView";
-import { ConnectEmptyState } from "@/components/LinkButton";
+import { ConnectEmptyState, AddAccountButton } from "@/components/LinkButton";
 import type { IncomeReport, SpendingReport, CashflowReport } from "@/lib/types";
 
 const ENDPOINT: Record<Tab, string> = {
@@ -57,9 +57,12 @@ export default function Home() {
 
   return (
     <main className="mx-auto flex w-full max-w-md flex-1 flex-col gap-4 px-4 pb-10 safe-top">
-      <header className="flex items-center justify-between pt-2">
+      <header className="flex items-center justify-between gap-2 pt-2">
         <h1 className="text-lg font-semibold">Reports</h1>
-        <DateRangePicker value={range} onChange={setRange} />
+        <div className="flex items-center gap-2">
+          {!empty && <AddAccountButton onLinked={load} />}
+          <DateRangePicker value={range} onChange={setRange} />
+        </div>
       </header>
 
       <ReportTabs value={tab} onChange={setTab} />

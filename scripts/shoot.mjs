@@ -34,7 +34,7 @@ for (const label of tabs) {
     );
     btn?.click();
   }, label);
-  await new Promise((r) => setTimeout(r, 1400));
+  await new Promise((r) => setTimeout(r, 2600));
   const file = `${OUT}/${label.replace(/\s+/g, "").toLowerCase()}.png`;
   await page.screenshot({ path: file, fullPage: true });
   console.log("shot", file);

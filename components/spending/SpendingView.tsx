@@ -51,6 +51,7 @@ export function SpendingView({ data }: { data: SpendingReport }) {
                 strokeWidth={2}
                 startAngle={90}
                 endAngle={-270}
+                isAnimationActive={false}
               >
                 {slices.map((s) => (
                   <Cell key={s.name} fill={s.color} />
