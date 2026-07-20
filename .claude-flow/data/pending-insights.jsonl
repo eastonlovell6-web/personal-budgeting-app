@@ -22,3 +22,10 @@
 {"type":"edit","file":"/Users/eastonlovell/Personal Budgeting App/lib/auth.ts","timestamp":1784507811764,"sessionId":null}
 {"type":"edit","file":"/Users/eastonlovell/Personal Budgeting App/lib/auth.ts","timestamp":1784507823494,"sessionId":null}
 {"type":"edit","file":"/Users/eastonlovell/Personal Budgeting App/middleware.ts","timestamp":1784507833349,"sessionId":null}
+{"type":"edit","file":"/Users/eastonlovell/Personal Budgeting App/tests/crypto.test.ts","timestamp":1784507906584,"sessionId":null}
+{"type":"edit","file":"/Users/eastonlovell/Personal Budgeting App/lib/crypto.ts","timestamp":1784507920801,"sessionId":null}
+{"type":"edit","file":"/Users/eastonlovell/Personal Budgeting App/lib/plaid.ts","timestamp":1784507933941,"sessionId":null}
+{"type":"edit","file":"/Users/eastonlovell/Personal Budgeting App/lib/sync.ts","timestamp":1784507951939,"sessionId":null}
+{"type":"edit","file":"/Users/eastonlovell/Personal Budgeting App/app/api/plaid/link-token/route.ts","timestamp":1784507959133,"sessionId":null}
+{"type":"edit","file":"/Users/eastonlovell/Personal Budgeting App/app/api/plaid/exchange/route.ts","timestamp":1784507967286,"sessionId":null}
+{"type":"edit","file":"/Users/eastonlovell/Personal Budgeting App/app/api/plaid/sync/route.ts","timestamp":1784507972056,"sessionId":null}
