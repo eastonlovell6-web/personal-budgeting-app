@@ -135,22 +135,14 @@ export function cashflowSankey(txns: Txn[]): SankeyData {
     addLink(addNode(`src:${display}`, display), hub, amt);
   }
 
-  // hub → group → leaf
-  type Leaf = { amount: number };
-  const groups = new Map<string, { total: number; leaves: Map<string, Leaf> }>();
+  // hub → expense group. (Leaf-level detail lives on the Spending page; a
+  // 3-level flow keeps labels legible on a phone.)
+  const groups = new Map<string, number>();
   let totalExpense = 0;
   for (const t of txns) {
     if (t.isIncome) continue;
     const info = categoryInfo(t.pfDetailed);
-    let g = groups.get(info.group);
-    if (!g) {
-      g = { total: 0, leaves: new Map() };
-      groups.set(info.group, g);
-    }
-    g.total += t.amount;
-    const leaf = g.leaves.get(info.display) ?? { amount: 0 };
-    leaf.amount += t.amount;
-    g.leaves.set(info.display, leaf);
+    groups.set(info.group, (groups.get(info.group) ?? 0) + t.amount);
     totalExpense += t.amount;
   }
 
@@ -158,12 +150,7 @@ export function cashflowSankey(txns: Txn[]): SankeyData {
     (a, b) => GROUPS.indexOf(a as (typeof GROUPS)[number]) - GROUPS.indexOf(b as (typeof GROUPS)[number])
   );
   for (const group of orderedGroups) {
-    const g = groups.get(group)!;
-    const groupNode = addNode(`grp:${group}`, group);
-    addLink(hub, groupNode, g.total);
-    for (const [leafName, leaf] of g.leaves) {
-      addLink(groupNode, addNode(`leaf:${group}:${leafName}`, leafName), leaf.amount);
-    }
+    addLink(hub, addNode(`grp:${group}`, group), groups.get(group)!);
   }
 
   // Savings (positive net) as a leaf off the hub
