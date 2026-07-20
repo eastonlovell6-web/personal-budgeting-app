@@ -1,36 +1,80 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Budget
 
-## Getting Started
+A personal, single-user budgeting app modeled on Monarch Money. Connects to your
+bank via **Plaid**, syncs transactions into a local database, and shows three
+reports — **Income**, **Spending**, and **Cash Flow** — in a dark, Monarch-style
+UI. Installs to your iPhone home screen as a **PWA** (no App Store).
 
-First, run the development server:
+## Stack
+
+- Next.js 16 (App Router) + TypeScript + Tailwind v4
+- Prisma (SQLite in dev → Postgres in prod)
+- Plaid (`/transactions/sync`)
+- Recharts (bars/donut) + d3-sankey (cash flow)
+- Passcode auth with an HMAC-signed session cookie
+
+## Setup
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+cp .env.example .env      # then fill in the values below
+npx prisma migrate dev    # creates the local SQLite db
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Environment variables (`.env`)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+| Var | What | Example |
+|-----|------|---------|
+| `DATABASE_URL` | Prisma connection string | `file:./dev.db` |
+| `PLAID_CLIENT_ID` | From the Plaid dashboard | |
+| `PLAID_SECRET` | Plaid **Sandbox** secret to start | |
+| `PLAID_ENV` | `sandbox` now, `production` later | `sandbox` |
+| `APP_PASSCODE` | The passcode you type to unlock the app | `1234` |
+| `SESSION_SECRET` | Random string that signs your session cookie | (any long random string) |
+| `ENCRYPTION_KEY` | Random string used to encrypt Plaid tokens at rest | (any long random string) |
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Get Plaid keys at <https://dashboard.plaid.com> → **Developers → Keys**. Sandbox
+keys work immediately; real-bank data needs Plaid **Production** access (a
+separate request).
 
-## Learn More
+## Run
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+npm run dev          # http://localhost:3000
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Unlock with your `APP_PASSCODE`, then **Connect a bank**. In Plaid Sandbox use
+any institution with credentials `user_good` / `pass_good`.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Try it with demo data (no Plaid needed)
 
-## Deploy on Vercel
+```bash
+npm run seed         # inserts 6 months of fake transactions
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Test
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```bash
+npm test             # vitest — categories, aggregations, crypto
+```
+
+## Install on your iPhone
+
+Open the app's URL in Safari → Share → **Add to Home Screen**. It launches
+full-screen with its own icon, behind the passcode.
+
+## Deploying (later)
+
+1. In `prisma/schema.prisma`, change `provider = "sqlite"` → `"postgresql"`.
+2. Point `DATABASE_URL` at your host's Postgres and run `prisma migrate deploy`.
+3. Set all env vars on the host; set `PLAID_ENV=production` once approved.
+4. Deploy (Railway / Render / Fly).
+
+## Project layout
+
+- `lib/aggregations.ts` — income/spending/cash-flow math (unit-tested)
+- `lib/categories.ts` — Plaid category → display name/emoji/group
+- `lib/sync.ts` — Plaid `/transactions/sync` → DB
+- `app/api/reports/*` — report endpoints the UI reads
+- `components/{income,spending,cashflow}/*` — the three report views
+- `docs/superpowers/` — design spec and implementation plan
