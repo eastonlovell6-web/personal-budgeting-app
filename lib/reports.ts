@@ -28,10 +28,14 @@ function sixMonthsBefore(end: Date): Date {
   );
 }
 
-/** Load transactions in [start, end] as the lightweight Txn shape. */
+/** Load transactions in [start, end] as the lightweight Txn shape.
+ * Internal transfers are excluded — they're neither income nor spending. */
 export async function loadTxns(start: Date, end: Date): Promise<Txn[]> {
   const rows = await prisma.transaction.findMany({
-    where: { date: { gte: start, lte: end } },
+    where: {
+      date: { gte: start, lte: end },
+      NOT: { pfPrimary: { startsWith: "TRANSFER" } },
+    },
     orderBy: { date: "asc" },
   });
   return rows.map((r) => ({

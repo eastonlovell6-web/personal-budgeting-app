@@ -45,6 +45,16 @@ export default function Home() {
     load();
   }, [load]);
 
+  // Pull fresh data from Plaid once when the app opens, then refresh the view.
+  // Runs in the background so cached data shows immediately.
+  const [synced, setSynced] = useState(false);
+  useEffect(() => {
+    fetch("/api/plaid/sync", { method: "POST" }).finally(() => setSynced(true));
+  }, []);
+  useEffect(() => {
+    if (synced) load();
+  }, [synced, load]);
+
   const ready = data !== null && dataKey === key;
   const empty =
     ready &&

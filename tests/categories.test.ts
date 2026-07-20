@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { categoryInfo, isIncomeCategory, GROUPS } from "@/lib/categories";
+import { categoryInfo, isIncomeCategory, isTransfer, GROUPS } from "@/lib/categories";
 
 describe("categories", () => {
   it("maps a known detailed category to display/emoji/group", () => {
@@ -21,10 +21,16 @@ describe("categories", () => {
     expect(c.group).toBe("Other");
   });
 
-  it("classifies income primary categories", () => {
+  it("classifies income primary categories (transfers are not income)", () => {
     expect(isIncomeCategory("INCOME")).toBe(true);
-    expect(isIncomeCategory("TRANSFER_IN")).toBe(true);
+    expect(isIncomeCategory("TRANSFER_IN")).toBe(false);
     expect(isIncomeCategory("FOOD_AND_DRINK")).toBe(false);
+  });
+
+  it("flags transfers so reports can exclude them", () => {
+    expect(isTransfer("TRANSFER_IN")).toBe(true);
+    expect(isTransfer("TRANSFER_OUT")).toBe(true);
+    expect(isTransfer("FOOD_AND_DRINK")).toBe(false);
   });
 
   it("exposes ordered groups starting with Income and ending with Other", () => {

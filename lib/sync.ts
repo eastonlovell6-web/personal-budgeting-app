@@ -99,11 +99,12 @@ export async function syncItem(itemId: string): Promise<SyncCounts> {
   };
 }
 
-/** Sync every connected item; totals the counts. */
+/** Sync every real connected item; totals the counts. Skips demo seed data. */
 export async function syncAllItems(): Promise<SyncCounts> {
   const items = await prisma.item.findMany();
   const total: SyncCounts = { added: 0, modified: 0, removed: 0 };
   for (const item of items) {
+    if (item.accessToken === "demo") continue; // seeded demo data, not a real Plaid item
     const c = await syncItem(item.itemId);
     total.added += c.added;
     total.modified += c.modified;

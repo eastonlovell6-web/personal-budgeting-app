@@ -161,7 +161,16 @@ function guessPrimaryLength(pfDetailed: string): number {
   return 1;
 }
 
-/** True when a transaction's primary category represents incoming money. */
+/** True when a transaction's primary category represents earned income. */
 export function isIncomeCategory(pfPrimary: string): boolean {
-  return pfPrimary.startsWith("INCOME") || pfPrimary === "TRANSFER_IN";
+  return pfPrimary.startsWith("INCOME");
+}
+
+/**
+ * Transfers between the user's own accounts (and credit-card payments) are
+ * neither income nor spending — they're excluded from all reports, the way
+ * Monarch nets out internal movement.
+ */
+export function isTransfer(pfPrimary: string): boolean {
+  return pfPrimary.startsWith("TRANSFER");
 }
