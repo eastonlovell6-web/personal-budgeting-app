@@ -6,3 +6,6 @@
 {"type":"edit","file":"/Users/eastonlovell/Personal Budgeting App/prisma/schema.prisma","timestamp":1784507288600,"sessionId":null}
 {"type":"edit","file":"/Users/eastonlovell/Personal Budgeting App/lib/types.ts","timestamp":1784507297485,"sessionId":null}
 {"type":"edit","file":"/Users/eastonlovell/Personal Budgeting App/lib/db.ts","timestamp":1784507303136,"sessionId":null}
+{"type":"edit","file":"/Users/eastonlovell/Personal Budgeting App/vitest.config.ts","timestamp":1784507363642,"sessionId":null}
+{"type":"edit","file":"/Users/eastonlovell/Personal Budgeting App/tests/categories.test.ts","timestamp":1784507371548,"sessionId":null}
+{"type":"edit","file":"/Users/eastonlovell/Personal Budgeting App/lib/categories.ts","timestamp":1784507428249,"sessionId":null}
