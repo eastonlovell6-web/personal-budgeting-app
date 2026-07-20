@@ -1,0 +1,47 @@
+// Dev uses SQLite for zero-setup local runs.
+// Production: change provider to "postgresql" and point DATABASE_URL at Postgres.
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Item {
+  id          String    @id @default(cuid())
+  itemId      String    @unique
+  accessToken String // AES-256-GCM encrypted at rest
+  institution String
+  cursor      String?
+  createdAt   DateTime  @default(now())
+  accounts    Account[]
+}
+
+model Account {
+  accountId      String        @id
+  itemId         String
+  item           Item          @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  name           String
+  type           String
+  currentBalance Float?
+  updatedAt      DateTime      @default(now())
+  transactions   Transaction[]
+}
+
+model Transaction {
+  transactionId String   @id
+  accountId     String
+  account       Account  @relation(fields: [accountId], references: [accountId], onDelete: Cascade)
+  date          DateTime
+  amount        Float // positive magnitude; direction carried by isIncome
+  merchantName  String?
+  name          String
+  pfPrimary     String
+  pfDetailed    String
+  isIncome      Boolean
+  pending       Boolean  @default(false)
+
+  @@index([date])
+}
