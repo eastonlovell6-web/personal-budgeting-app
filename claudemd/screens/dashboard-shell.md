@@ -21,9 +21,10 @@ flow views").
 - `components/DateRangePicker.tsx:33` — dropdown of 4 presets (Last 3/6/12
   months, Year to date), default "Last 6 months" (`DEFAULT_RANGE_INDEX = 1`,
   `components/DateRangePicker.tsx:31`).
-- `components/LinkButton.tsx:66` — `ConnectEmptyState` (empty-state CTA) and
-  `AddAccountButton` (header "+ Account" button), both driving the shared
-  `usePlaidConnect` hook (`components/LinkButton.tsx:12`).
+- `components/LinkButton.tsx:71` — `ConnectEmptyState` (empty-state CTA) and
+  `AddAccountButton` (`components/LinkButton.tsx:103`, header "+ Account"
+  button), both driving the shared `usePlaidConnect` hook
+  (`components/LinkButton.tsx:12`).
 - `lib/format.ts:52` — `isoDate()` used to build report query params.
 
 ## Layout / UI Spec
