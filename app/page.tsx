@@ -13,17 +13,24 @@ import { isoDate } from "@/lib/format";
 import { IncomeView } from "@/components/income/IncomeView";
 import { SpendingView } from "@/components/spending/SpendingView";
 import { CashflowView } from "@/components/cashflow/CashflowView";
+import { InvestingView } from "@/components/investing/InvestingView";
 import {
   ConnectEmptyState,
   AddAccountButton,
   PlaidOAuthResume,
 } from "@/components/LinkButton";
-import type { IncomeReport, SpendingReport, CashflowReport } from "@/lib/types";
+import type {
+  IncomeReport,
+  SpendingReport,
+  CashflowReport,
+  InvestingReport,
+} from "@/lib/types";
 
 const ENDPOINT: Record<Tab, string> = {
   income: "/api/reports/income",
   spending: "/api/reports/spending",
   cashflow: "/api/reports/cashflow",
+  investing: "/api/reports/investing",
 };
 
 export default function Home() {
@@ -47,7 +54,7 @@ function Dashboard() {
   const [tab, setTab] = useState<Tab>("income");
   const [range, setRange] = useState<Range>(() => presets()[DEFAULT_RANGE_INDEX]);
   const [data, setData] = useState<
-    IncomeReport | SpendingReport | CashflowReport | null
+    IncomeReport | SpendingReport | CashflowReport | InvestingReport | null
   >(null);
   // Which (tab,range) the loaded data belongs to — guards against rendering a
   // view with another tab's data during the fetch after a switch.
@@ -84,8 +91,10 @@ function Dashboard() {
       ? (data as IncomeReport).summary.count === 0
       : tab === "spending"
         ? (data as SpendingReport).total === 0
-        : (data as CashflowReport).stats.income === 0 &&
-          (data as CashflowReport).stats.expenses === 0);
+        : tab === "cashflow"
+          ? (data as CashflowReport).stats.income === 0 &&
+            (data as CashflowReport).stats.expenses === 0
+          : false);
 
   return (
     <main className="mx-auto flex w-full max-w-md flex-1 flex-col gap-4 px-4 pb-10 safe-top">
@@ -109,8 +118,10 @@ function Dashboard() {
         <IncomeView data={data as IncomeReport} range={range} />
       ) : tab === "spending" ? (
         <SpendingView data={data as SpendingReport} />
-      ) : (
+      ) : tab === "cashflow" ? (
         <CashflowView data={data as CashflowReport} />
+      ) : (
+        <InvestingView data={data as InvestingReport} />
       )}
     </main>
   );
