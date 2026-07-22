@@ -174,3 +174,13 @@ export function isIncomeCategory(pfPrimary: string): boolean {
 export function isTransfer(pfPrimary: string): boolean {
   return pfPrimary.startsWith("TRANSFER");
 }
+
+/** The one detailed transfer category that represents money leaving for an
+ * investment/retirement account, distinct from all other transfers. */
+export const INVESTMENT_TRANSFER_DETAILED =
+  "TRANSFER_OUT_INVESTMENT_AND_RETIREMENT_FUNDS";
+
+/** True only for the exact detailed category that funds investment accounts. */
+export function isInvestmentTransferCategory(pfDetailed: string): boolean {
+  return pfDetailed === INVESTMENT_TRANSFER_DETAILED;
+}

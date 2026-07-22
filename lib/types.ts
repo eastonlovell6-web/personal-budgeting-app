@@ -51,8 +51,22 @@ export type CashflowStats = {
   expenses: number;
   net: number;
   savingsRate: number;
+  investing: number;
 };
 export type CashflowReport = {
   sankey: SankeyData;
   stats: CashflowStats;
 };
+
+/** Investing report */
+export type InvestmentAccount = {
+  accountId: string;
+  name: string;
+  institution: string;
+  currentBalance: number | null;
+};
+export type InvestingSummary = {
+  accounts: InvestmentAccount[]; // sorted by balance desc, nulls last
+  total: number; // sum of non-null balances only
+};
+export type InvestingReport = InvestingSummary;
