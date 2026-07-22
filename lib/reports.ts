@@ -1,6 +1,7 @@
 // Shared helpers for the report API routes: date-range parsing + txn loading.
 import { prisma } from "@/lib/db";
 import type { Txn } from "@/lib/types";
+import { INVESTMENT_TRANSFER_DETAILED } from "@/lib/categories";
 
 /** Parse ?start & ?end (YYYY-MM-DD); default to the last 6 whole months. */
 export function parseRange(url: string): { start: Date; end: Date } {
@@ -53,4 +54,20 @@ export async function loadTxns(start: Date, end: Date): Promise<Txn[]> {
     pfDetailed: r.pfDetailed,
     isIncome: r.isIncome,
   }));
+}
+
+/** Sum of transfers into investment/retirement accounts in [start, end].
+ * Independent of loadTxns() — Income/Spending reports never see this. */
+export async function loadInvestmentTransferTotal(
+  start: Date,
+  end: Date
+): Promise<number> {
+  const result = await prisma.transaction.aggregate({
+    where: {
+      date: { gte: start, lte: end },
+      pfDetailed: INVESTMENT_TRANSFER_DETAILED,
+    },
+    _sum: { amount: true },
+  });
+  return result._sum.amount ?? 0;
 }
