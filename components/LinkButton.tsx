@@ -24,7 +24,7 @@ function usePlaidConnect(onDone: () => void) {
       }
       // Persisted so the OAuth-return page can resume Link with the same
       // token after a full-page redirect to the bank and back.
-      sessionStorage.setItem("plaid_link_token", json.link_token);
+      localStorage.setItem("plaid_link_token", json.link_token);
       setToken(json.link_token);
     } catch {
       setStatus("error");
@@ -41,7 +41,7 @@ function usePlaidConnect(onDone: () => void) {
           body: JSON.stringify({ public_token: publicToken }),
         });
       } finally {
-        sessionStorage.removeItem("plaid_link_token");
+        localStorage.removeItem("plaid_link_token");
         setStatus("idle");
         setToken(null);
         onDone();
@@ -54,7 +54,7 @@ function usePlaidConnect(onDone: () => void) {
     token,
     onSuccess: (public_token) => onSuccess(public_token),
     onExit: () => {
-      sessionStorage.removeItem("plaid_link_token");
+      localStorage.removeItem("plaid_link_token");
       setStatus("idle");
       setToken(null);
     },

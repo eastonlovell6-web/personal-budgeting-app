@@ -6,18 +6,18 @@ import { usePlaidLink } from "react-plaid-link";
 
 /**
  * Where Plaid Link redirects back to after an OAuth bank login. Resumes Link
- * with the same token used before the redirect (persisted in sessionStorage
+ * with the same token used before the redirect (persisted in localStorage
  * by LinkButton) plus the full return URL, per Plaid's OAuth flow.
  */
 export default function PlaidOAuthReturn() {
   const router = useRouter();
   // undefined = not yet on the client (SSR pass), null = checked and
   // missing, string = found. Read lazily in the initializer (not an effect)
-  // since sessionStorage is only available once mounted client-side.
+  // since localStorage is only available once mounted client-side.
   const [token] = useState<string | null | undefined>(() =>
     typeof window === "undefined"
       ? undefined
-      : sessionStorage.getItem("plaid_link_token")
+      : localStorage.getItem("plaid_link_token")
   );
 
   const { open, ready } = usePlaidLink({
@@ -25,7 +25,7 @@ export default function PlaidOAuthReturn() {
     receivedRedirectUri:
       typeof window !== "undefined" ? window.location.href : undefined,
     onSuccess: async (public_token) => {
-      sessionStorage.removeItem("plaid_link_token");
+      localStorage.removeItem("plaid_link_token");
       try {
         await fetch("/api/plaid/exchange", {
           method: "POST",
@@ -37,7 +37,7 @@ export default function PlaidOAuthReturn() {
       }
     },
     onExit: () => {
-      sessionStorage.removeItem("plaid_link_token");
+      localStorage.removeItem("plaid_link_token");
       router.replace("/");
     },
   });
@@ -47,7 +47,7 @@ export default function PlaidOAuthReturn() {
   }, [token, ready, open]);
 
   useEffect(() => {
-    // No token in sessionStorage means this page was opened directly,
+    // No token in localStorage means this page was opened directly,
     // not via a real OAuth redirect — nothing to resume.
     if (token === null) router.replace("/");
   }, [token, router]);
