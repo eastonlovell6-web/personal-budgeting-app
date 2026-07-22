@@ -8,6 +8,7 @@ export function StatRow({ stats }: { stats: CashflowStats }) {
     { label: "Total expenses", value: money0(stats.expenses), color: CHART.negative },
     { label: "Net income", value: money0(stats.net), color: stats.net >= 0 ? CHART.positive : CHART.negative },
     { label: "Savings rate", value: `${(stats.savingsRate * 100).toFixed(1)}%`, color: CHART.textPrimary },
+    { label: "Investing", value: money0(stats.investing), color: CHART.textPrimary },
   ];
   return (
     <div className="grid grid-cols-2 gap-2">
