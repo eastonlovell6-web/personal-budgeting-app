@@ -84,7 +84,7 @@ export function spendingByCategory(txns: Txn[]): SpendingCategory[] {
 }
 
 /** Top-level cash flow numbers. */
-export function cashflowStats(txns: Txn[]): CashflowStats {
+export function cashflowStats(txns: Txn[], investingTotal = 0): CashflowStats {
   let income = 0;
   let expenses = 0;
   for (const t of txns) {
@@ -93,7 +93,7 @@ export function cashflowStats(txns: Txn[]): CashflowStats {
   }
   const net = income - expenses;
   const savingsRate = income > 0 ? net / income : 0;
-  return { income, expenses, net, savingsRate };
+  return { income, expenses, net, savingsRate, investing: investingTotal };
 }
 
 /**
@@ -101,7 +101,7 @@ export function cashflowStats(txns: Txn[]): CashflowStats {
  * categories, plus a "Savings" leaf for positive net. Nodes are keyed by a
  * role-qualified key so display names can safely repeat across roles.
  */
-export function cashflowSankey(txns: Txn[]): SankeyData {
+export function cashflowSankey(txns: Txn[], investingTotal = 0): SankeyData {
   const nodes: { name: string }[] = [];
   const nodeIndex = new Map<string, number>();
   const addNode = (key: string, name: string): number => {
@@ -155,9 +155,16 @@ export function cashflowSankey(txns: Txn[]): SankeyData {
     addLink(hub, addNode(`grp:${group}`, group), groups.get(group)!);
   }
 
-  // Savings (positive net) as a leaf off the hub
+  // Investing (money transferred to investment accounts) as a leaf off the
+  // hub, added before Savings so Savings reflects the true leftover.
+  if (investingTotal > 0) {
+    addLink(hub, addNode("inv:Investing", "Investing"), investingTotal);
+  }
+
+  // Savings (positive net, minus what was invested) as a leaf off the hub
   const net = totalIncome - totalExpense;
-  if (net > 0) addLink(hub, addNode("sav:Savings", "Savings"), net);
+  const savings = net - investingTotal;
+  if (savings > 0) addLink(hub, addNode("sav:Savings", "Savings"), savings);
 
   return { nodes, links };
 }

@@ -123,4 +123,40 @@ describe("aggregations", () => {
     expect(s.accounts).toEqual([]);
     expect(s.total).toBe(0);
   });
+
+  it("cashflow stats include the investing total and default to 0", () => {
+    const withDefault = cashflowStats(fixture);
+    expect(withDefault.investing).toBe(0);
+
+    const withInvesting = cashflowStats(fixture, 1000);
+    expect(withInvesting.investing).toBe(1000);
+    // income/expenses/net/savingsRate are unaffected by investingTotal
+    expect(withInvesting.income).toBe(8050);
+    expect(withInvesting.net).toBe(5630);
+  });
+
+  it("cashflow sankey adds an Investing leaf and reduces Savings when investingTotal > 0", () => {
+    const withoutInvesting = cashflowSankey(fixture);
+    expect(withoutInvesting.nodes.some((n) => n.name === "Investing")).toBe(false);
+    const savingsLinkBefore = withoutInvesting.links.find(
+      (l) => withoutInvesting.nodes[l.target].name === "Savings"
+    )!;
+    expect(savingsLinkBefore.value).toBe(5630);
+
+    const withInvesting = cashflowSankey(fixture, 1000);
+    expect(withInvesting.nodes.some((n) => n.name === "Investing")).toBe(true);
+    const investingLink = withInvesting.links.find(
+      (l) => withInvesting.nodes[l.target].name === "Investing"
+    )!;
+    expect(investingLink.value).toBe(1000);
+    const savingsLinkAfter = withInvesting.links.find(
+      (l) => withInvesting.nodes[l.target].name === "Savings"
+    )!;
+    expect(savingsLinkAfter.value).toBe(4630); // 5630 net - 1000 invested
+  });
+
+  it("cashflow sankey omits the Investing leaf when investingTotal is 0", () => {
+    const s = cashflowSankey(fixture, 0);
+    expect(s.nodes.some((n) => n.name === "Investing")).toBe(false);
+  });
 });
