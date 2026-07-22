@@ -13,19 +13,23 @@ export default function LoginPage() {
     e.preventDefault();
     setLoading(true);
     setError(false);
-    const res = await fetch("/api/auth/login", {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({ passcode }),
-    });
-    setLoading(false);
-    if (res.ok) {
-      router.replace("/");
-      router.refresh();
-    } else {
-      setError(true);
-      setPasscode("");
+    try {
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ passcode }),
+      });
+      if (res.ok) {
+        router.replace("/");
+        router.refresh();
+        return;
+      }
+    } catch {
+      // network error — fall through to the error state below
     }
+    setLoading(false);
+    setError(true);
+    setPasscode("");
   }
 
   return (

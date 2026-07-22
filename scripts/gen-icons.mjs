@@ -20,6 +20,7 @@ const b = await puppeteer.launch({ executablePath: CHROME, headless: "new", args
 const p = await b.newPage();
 
 const targets = [
+  [1024, `${ICONS}/icon-1024.png`],
   [512, `${ICONS}/icon-512.png`],
   [192, `${ICONS}/icon-192.png`],
   [180, `${PUBLIC}/apple-touch-icon.png`],
