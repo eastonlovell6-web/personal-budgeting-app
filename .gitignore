@@ -8,3 +8,5 @@ out/
 *.db-journal
 prisma/dev.db*
 .claude-flow/
+
+.worktrees/
