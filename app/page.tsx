@@ -1,6 +1,7 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { Suspense, useCallback, useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { ReportTabs, type Tab } from "@/components/ReportTabs";
 import {
   DateRangePicker,
@@ -12,7 +13,11 @@ import { isoDate } from "@/lib/format";
 import { IncomeView } from "@/components/income/IncomeView";
 import { SpendingView } from "@/components/spending/SpendingView";
 import { CashflowView } from "@/components/cashflow/CashflowView";
-import { ConnectEmptyState, AddAccountButton } from "@/components/LinkButton";
+import {
+  ConnectEmptyState,
+  AddAccountButton,
+  PlaidOAuthResume,
+} from "@/components/LinkButton";
 import type { IncomeReport, SpendingReport, CashflowReport } from "@/lib/types";
 
 const ENDPOINT: Record<Tab, string> = {
@@ -22,6 +27,23 @@ const ENDPOINT: Record<Tab, string> = {
 };
 
 export default function Home() {
+  return (
+    <Suspense fallback={null}>
+      <HomeRouter />
+    </Suspense>
+  );
+}
+
+function HomeRouter() {
+  // Plaid's OAuth redirect_uri for this app is the bare origin, so the
+  // return trip lands here at "/" with an oauth_state_id query param
+  // instead of a dedicated route.
+  const searchParams = useSearchParams();
+  if (searchParams.get("oauth_state_id")) return <PlaidOAuthResume />;
+  return <Dashboard />;
+}
+
+function Dashboard() {
   const [tab, setTab] = useState<Tab>("income");
   const [range, setRange] = useState<Range>(() => presets()[DEFAULT_RANGE_INDEX]);
   const [data, setData] = useState<

@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { usePlaidLink } from "react-plaid-link";
 
 type Status = "idle" | "loading" | "syncing" | "error";
@@ -111,5 +112,59 @@ export function AddAccountButton({ onLinked }: { onLinked: () => void }) {
     >
       {status === "syncing" ? "Syncing…" : "＋ Account"}
     </button>
+  );
+}
+
+/**
+ * Rendered at "/" when Plaid's OAuth redirect lands back with an
+ * oauth_state_id query param. Resumes Link with the token saved by
+ * usePlaidConnect before the redirect out to the bank, then clears the query
+ * string. Plaid's dashboard only allows a bare-origin redirect_uri for this
+ * account, so this can't live on its own route — it must run at "/".
+ */
+export function PlaidOAuthResume() {
+  const router = useRouter();
+  const [token] = useState<string | null | undefined>(() =>
+    typeof window === "undefined"
+      ? undefined
+      : localStorage.getItem("plaid_link_token")
+  );
+
+  const { open, ready } = usePlaidLink({
+    token: token ?? null,
+    receivedRedirectUri:
+      typeof window !== "undefined" ? window.location.href : undefined,
+    onSuccess: async (public_token) => {
+      localStorage.removeItem("plaid_link_token");
+      try {
+        await fetch("/api/plaid/exchange", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ public_token }),
+        });
+      } finally {
+        router.replace("/");
+      }
+    },
+    onExit: () => {
+      localStorage.removeItem("plaid_link_token");
+      router.replace("/");
+    },
+  });
+
+  useEffect(() => {
+    if (token && ready) open();
+  }, [token, ready, open]);
+
+  useEffect(() => {
+    // No token in localStorage means this wasn't a real OAuth redirect
+    // (e.g. the query param was hit directly) — nothing to resume.
+    if (token === null) router.replace("/");
+  }, [token, router]);
+
+  return (
+    <main className="flex flex-1 items-center justify-center py-20 text-sm text-muted">
+      Finishing bank connection…
+    </main>
   );
 }
