@@ -13,9 +13,11 @@ type Status = "idle" | "loading" | "syncing" | "error";
 function usePlaidConnect(onDone: () => void) {
   const [token, setToken] = useState<string | null>(null);
   const [status, setStatus] = useState<Status>("idle");
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const start = useCallback(async () => {
     setStatus("loading");
+    setErrorMessage(null);
     try {
       const res = await fetch("/api/plaid/link-token", { method: "POST" });
       const json = await res.json();
@@ -54,9 +56,12 @@ function usePlaidConnect(onDone: () => void) {
   const { open, ready } = usePlaidLink({
     token,
     onSuccess: (public_token) => onSuccess(public_token),
-    onExit: () => {
+    onExit: (error) => {
       localStorage.removeItem("plaid_link_token");
-      setStatus("idle");
+      setStatus(error ? "error" : "idle");
+      setErrorMessage(
+        error ? `${error.error_code}: ${error.error_message}` : null
+      );
       setToken(null);
     },
   });
@@ -66,11 +71,11 @@ function usePlaidConnect(onDone: () => void) {
     if (token && ready) open();
   }, [token, ready, open]);
 
-  return { start, status };
+  return { start, status, errorMessage };
 }
 
 export function ConnectEmptyState({ onLinked }: { onLinked: () => void }) {
-  const { start, status } = usePlaidConnect(onLinked);
+  const { start, status, errorMessage } = usePlaidConnect(onLinked);
   return (
     <div className="flex flex-1 flex-col items-center justify-center gap-4 py-20 text-center">
       <div className="text-4xl">🏦</div>
@@ -93,8 +98,8 @@ export function ConnectEmptyState({ onLinked }: { onLinked: () => void }) {
       </button>
       {status === "error" && (
         <p className="max-w-xs text-xs text-negative">
-          Couldn’t start Plaid. Check that your Plaid keys are set in the
-          server environment.
+          {errorMessage ??
+            "Couldn’t start Plaid. Check that your Plaid keys are set in the server environment."}
         </p>
       )}
     </div>
@@ -102,16 +107,23 @@ export function ConnectEmptyState({ onLinked }: { onLinked: () => void }) {
 }
 
 export function AddAccountButton({ onLinked }: { onLinked: () => void }) {
-  const { start, status } = usePlaidConnect(onLinked);
+  const { start, status, errorMessage } = usePlaidConnect(onLinked);
   return (
-    <button
-      onClick={start}
-      disabled={status === "loading" || status === "syncing"}
-      className="rounded-full border border-border bg-surface px-3 py-1.5 text-sm text-muted disabled:opacity-50"
-      aria-label="Add account"
-    >
-      {status === "syncing" ? "Syncing…" : "＋ Account"}
-    </button>
+    <div className="flex flex-col items-end gap-1">
+      <button
+        onClick={start}
+        disabled={status === "loading" || status === "syncing"}
+        className="rounded-full border border-border bg-surface px-3 py-1.5 text-sm text-muted disabled:opacity-50"
+        aria-label="Add account"
+      >
+        {status === "syncing" ? "Syncing…" : "＋ Account"}
+      </button>
+      {status === "error" && errorMessage && (
+        <p className="max-w-[12rem] text-right text-xs text-negative">
+          {errorMessage}
+        </p>
+      )}
+    </div>
   );
 }
 
@@ -129,6 +141,7 @@ export function PlaidOAuthResume() {
       ? undefined
       : localStorage.getItem("plaid_link_token")
   );
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const { open, ready } = usePlaidLink({
     token: token ?? null,
@@ -146,8 +159,14 @@ export function PlaidOAuthResume() {
         router.replace("/");
       }
     },
-    onExit: () => {
+    onExit: (error) => {
       localStorage.removeItem("plaid_link_token");
+      // Surface the real reason instead of silently bouncing home — a
+      // silent redirect here is indistinguishable from any other failure.
+      if (error) {
+        setErrorMessage(`${error.error_code}: ${error.error_message}`);
+        return;
+      }
       router.replace("/");
     },
   });
@@ -161,6 +180,20 @@ export function PlaidOAuthResume() {
     // (e.g. the query param was hit directly) — nothing to resume.
     if (token === null) router.replace("/");
   }, [token, router]);
+
+  if (errorMessage) {
+    return (
+      <main className="flex flex-1 flex-col items-center justify-center gap-3 py-20 text-center">
+        <p className="max-w-xs text-sm text-negative">{errorMessage}</p>
+        <button
+          onClick={() => router.replace("/")}
+          className="rounded-full border border-border bg-surface px-4 py-2 text-sm text-muted"
+        >
+          Back to home
+        </button>
+      </main>
+    );
+  }
 
   return (
     <main className="flex flex-1 items-center justify-center py-20 text-sm text-muted">
