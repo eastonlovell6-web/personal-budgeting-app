@@ -34,7 +34,12 @@ export async function loadTxns(start: Date, end: Date): Promise<Txn[]> {
   const rows = await prisma.transaction.findMany({
     where: {
       date: { gte: start, lte: end },
-      NOT: { pfPrimary: { startsWith: "TRANSFER" } },
+      NOT: {
+        OR: [
+          { pfPrimary: { startsWith: "TRANSFER" } },
+          { pfDetailed: "LOAN_PAYMENTS_CREDIT_CARD_PAYMENT" },
+        ],
+      },
     },
     orderBy: { date: "asc" },
   });
