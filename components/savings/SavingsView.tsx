@@ -2,7 +2,7 @@
 
 import { useCallback, useState } from "react";
 import type { SavingsReport, SavingsRuleType } from "@/lib/types";
-import { money0 } from "@/lib/format";
+import { money } from "@/lib/format";
 import { Card } from "@/components/ui/Card";
 
 export function SavingsView({
@@ -67,7 +67,7 @@ export function SavingsView({
         <Card>
           <div className="text-xs text-muted">Simulated this period</div>
           <div className="mt-1 text-2xl font-semibold tabular-nums">
-            {money0(data.combinedTotal)}
+            {money(data.combinedTotal)}
           </div>
           <div className="mt-3 flex flex-col gap-2">
             {data.rules
@@ -76,7 +76,7 @@ export function SavingsView({
                 <div key={r.id} className="flex items-center justify-between text-sm">
                   <span className="text-muted">{ruleLabel(r)}</span>
                   <span className="tabular-nums text-foreground">
-                    {money0(totalByRuleId.get(r.id) ?? 0)}
+                    {money(totalByRuleId.get(r.id) ?? 0)}
                   </span>
                 </div>
               ))}
