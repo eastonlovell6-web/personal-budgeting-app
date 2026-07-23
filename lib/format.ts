@@ -52,3 +52,12 @@ export function rangeLabel(start: Date, end: Date): string {
 export function isoDate(d: Date): string {
   return d.toISOString().slice(0, 10);
 }
+
+/** Distinct calendar months (UTC) touched by [start, end], inclusive —
+ * e.g. Jan 15 to Mar 3 -> 3. Used to scale a monthly $ cap to whatever
+ * date range is selected. */
+export function monthsInRange(start: Date, end: Date): number {
+  const startIndex = start.getUTCFullYear() * 12 + start.getUTCMonth();
+  const endIndex = end.getUTCFullYear() * 12 + end.getUTCMonth();
+  return endIndex - startIndex + 1;
+}
