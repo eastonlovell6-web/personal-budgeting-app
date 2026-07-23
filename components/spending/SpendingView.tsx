@@ -29,7 +29,7 @@ export function SpendingView({ data, range }: { data: SpendingReport; range: Ran
   const [expanded, setExpanded] = useState(false);
   const [expandedCategory, setExpandedCategory] = useState<string | null>(null);
   const [txnCache, setTxnCache] = useState<
-    Map<string, SpendingCategoryTransaction[] | "loading">
+    Map<string, SpendingCategoryTransaction[] | "loading" | "error">
   >(new Map());
 
   // Collapse and drop cached transactions whenever the selected date range
@@ -55,18 +55,17 @@ export function SpendingView({ data, range }: { data: SpendingReport; range: Ran
     setTxnCache((m) => new Map(m).set(detailed, "loading"));
     const qs = `?start=${isoDate(range.start)}&end=${isoDate(range.end)}&category=${encodeURIComponent(detailed)}`;
     fetch(`/api/reports/spending/transactions${qs}`)
-      .then((res) => res.json())
+      .then((res) => {
+        if (!res.ok) throw new Error(`spending transactions fetch failed: ${res.status}`);
+        return res.json();
+      })
       .then((txns: SpendingCategoryTransaction[]) => {
         if (rangeKeyRef.current !== requestRangeKey) return;
         setTxnCache((m) => new Map(m).set(detailed, txns));
       })
       .catch(() => {
         if (rangeKeyRef.current !== requestRangeKey) return;
-        setTxnCache((m) => {
-          const next = new Map(m);
-          next.delete(detailed);
-          return next;
-        });
+        setTxnCache((m) => new Map(m).set(detailed, "error"));
       });
   }
 
@@ -156,7 +155,7 @@ function CategoryRow({
   total: number;
   expanded: boolean;
   onToggle: () => void;
-  transactions: SpendingCategoryTransaction[] | "loading" | undefined;
+  transactions: SpendingCategoryTransaction[] | "loading" | "error" | undefined;
 }) {
   const pct = total > 0 ? (category.amount / total) * 100 : 0;
   return (
@@ -183,6 +182,8 @@ function CategoryRow({
         <div className="flex flex-col pb-2.5 pl-11">
           {transactions === "loading" || transactions === undefined ? (
             <div className="py-1.5 text-xs text-muted">Loading…</div>
+          ) : transactions === "error" ? (
+            <div className="py-1.5 text-xs text-muted">Couldn't load transactions.</div>
           ) : (
             transactions.map((t) => <TransactionRow key={t.transactionId} txn={t} />)
           )}
