@@ -41,6 +41,13 @@ export type SpendingReport = {
   categories: SpendingCategory[];
 };
 
+export type SpendingCategoryTransaction = {
+  transactionId: string;
+  date: string; // ISO date, e.g. "2026-01-20"
+  name: string; // merchantName ?? name, resolved here
+  amount: number;
+};
+
 /** Cash flow report */
 export type SankeyData = {
   nodes: { name: string }[];

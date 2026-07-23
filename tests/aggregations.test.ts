@@ -4,6 +4,7 @@ import {
   incomeSummary,
   incomeReport,
   spendingByCategory,
+  transactionsForCategory,
   cashflowSankey,
   cashflowStats,
   investingSummary,
@@ -63,6 +64,32 @@ describe("aggregations", () => {
     expect(rows[0].display).toBe("Rent");
     expect(rows.find((r) => r.detailed === "FOOD_AND_DRINK_GROCERIES")!.amount).toBe(300);
     expect(rows.some((r) => r.detailed.startsWith("INCOME"))).toBe(false);
+  });
+
+  it("transactionsForCategory filters to one category, sorts newest first", () => {
+    const rows = transactionsForCategory(fixture, "FOOD_AND_DRINK_GROCERIES");
+    expect(rows).toHaveLength(1);
+    expect(rows[0].name).toBe("x");
+    expect(rows[0].amount).toBe(300);
+
+    const rentAndFood = [
+      ...fixture,
+      t({
+        pfPrimary: "FOOD_AND_DRINK",
+        pfDetailed: "FOOD_AND_DRINK_GROCERIES",
+        amount: 45,
+        date: new Date("2026-01-20"),
+        merchantName: "Trader Joe's",
+      }),
+    ];
+    const multi = transactionsForCategory(rentAndFood, "FOOD_AND_DRINK_GROCERIES");
+    expect(multi).toHaveLength(2);
+    // newest first
+    expect(multi[0].date).toBe("2026-01-20");
+    expect(multi[0].name).toBe("Trader Joe's");
+    expect(multi[1].date).toBe("2026-01-10");
+
+    expect(transactionsForCategory(fixture, "INCOME_WAGES")).toHaveLength(0);
   });
 
   it("cashflow stats compute net and savings rate", () => {

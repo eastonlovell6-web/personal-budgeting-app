@@ -1,11 +1,13 @@
 // Pure aggregation functions over transactions. No I/O — fully unit-testable.
 import { categoryInfo, GROUPS } from "@/lib/categories";
+import { isoDate } from "@/lib/format";
 import type {
   Txn,
   IncomeMonth,
   IncomeSummary,
   IncomeReport,
   SpendingCategory,
+  SpendingCategoryTransaction,
   SankeyData,
   CashflowStats,
   InvestmentAccount,
@@ -81,6 +83,22 @@ export function spendingByCategory(txns: Txn[]): SpendingCategory[] {
     row.amount += t.amount;
   }
   return [...byCat.values()].sort((a, b) => b.amount - a.amount);
+}
+
+/** One category's transactions, newest first — powers the Spending drill-down. */
+export function transactionsForCategory(
+  txns: Txn[],
+  detailed: string
+): SpendingCategoryTransaction[] {
+  return txns
+    .filter((t) => !t.isIncome && t.pfDetailed === detailed)
+    .sort((a, b) => b.date.getTime() - a.date.getTime())
+    .map((t) => ({
+      transactionId: t.transactionId,
+      date: isoDate(t.date),
+      name: t.merchantName ?? t.name,
+      amount: t.amount,
+    }));
 }
 
 /** Top-level cash flow numbers. */
