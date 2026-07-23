@@ -1,5 +1,5 @@
 // Pure aggregation functions over transactions. No I/O — fully unit-testable.
-import { categoryInfo, GROUPS } from "@/lib/categories";
+import { categoryInfo, GROUPS, GROUP_EMOJI } from "@/lib/categories";
 import type {
   Txn,
   IncomeMonth,
@@ -14,6 +14,7 @@ import type {
   CashPlacementNudgeResult,
   SavingsRule,
   SavingsSimulationResult,
+  EnvelopeGroupProgress,
 } from "@/lib/types";
 
 function monthKey(d: Date): string {
@@ -272,4 +273,39 @@ export function savingsRulesSimulation(
 
   combinedTotal = Math.round(combinedTotal * 100) / 100;
   return { perRule, combinedTotal };
+}
+
+const EXPENSE_GROUPS = GROUPS.filter((g) => g !== "Income");
+
+/** Per-group spend vs. monthly cap (scaled to the range's month count), for
+ * Envelope budgeting mode. Always returns all 9 expense groups (Income
+ * excluded), even ones with no activity or no cap set, so the Envelope
+ * Caps card has a stable row set regardless of the selected range. */
+export function envelopeProgress(
+  txns: Txn[],
+  caps: Record<string, number>,
+  months: number
+): EnvelopeGroupProgress[] {
+  const actualByGroup = new Map<string, number>();
+  for (const t of txns) {
+    if (t.isIncome) continue;
+    const group = categoryInfo(t.pfDetailed).group;
+    if (group === "Income") continue;
+    actualByGroup.set(group, (actualByGroup.get(group) ?? 0) + t.amount);
+  }
+
+  return EXPENSE_GROUPS.map((group) => {
+    const actual = actualByGroup.get(group) ?? 0;
+    const monthlyCap = caps[group] ?? null;
+    const cap = monthlyCap != null ? monthlyCap * months : null;
+    const overBy = cap != null && actual > cap ? actual - cap : null;
+    return {
+      group,
+      emoji: GROUP_EMOJI[group],
+      actual,
+      monthlyCap,
+      cap,
+      overBy,
+    };
+  });
 }

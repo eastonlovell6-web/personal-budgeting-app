@@ -18,6 +18,21 @@ export const GROUPS = [
   "Other",
 ] as const;
 
+// One emoji per group, for the Envelope Caps card (lib/aggregations.ts's
+// envelopeProgress). Distinct from each detailed category's own emoji.
+export const GROUP_EMOJI: Record<(typeof GROUPS)[number], string> = {
+  Income: "💵",
+  Housing: "🏠",
+  "Bills & Utilities": "🔌",
+  "Food & Dining": "🍽️",
+  Transportation: "🚗",
+  Shopping: "🛍️",
+  "Travel & Vacation": "🧳",
+  Entertainment: "🎬",
+  "Health & Wellness": "🏥",
+  Other: "💸",
+};
+
 // detailed PFC -> display metadata
 const MAP: Record<string, CategoryInfo> = {
   // ---- Income ----

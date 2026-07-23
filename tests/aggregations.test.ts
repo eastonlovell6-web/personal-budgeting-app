@@ -9,6 +9,7 @@ import {
   investingSummary,
   cashPlacementNudge,
   savingsRulesSimulation,
+  envelopeProgress,
 } from "@/lib/aggregations";
 import type {
   Txn,
@@ -319,5 +320,27 @@ describe("aggregations", () => {
       expect(result.perRule).toEqual([{ ruleId: "r1", type: "split", total: 0 }]);
       expect(result.combinedTotal).toBe(0);
     });
+  });
+
+  it("envelope progress covers all 9 expense groups and scales caps by months", () => {
+    const rows = envelopeProgress(fixture, { "Food & Dining": 100 }, 2);
+
+    expect(rows).toHaveLength(9);
+    expect(rows.some((r) => r.group === "Income")).toBe(false);
+
+    const dining = rows.find((r) => r.group === "Food & Dining")!;
+    expect(dining.actual).toBe(420); // groceries 300 + restaurant 120
+    expect(dining.monthlyCap).toBe(100);
+    expect(dining.cap).toBe(200); // 100 * 2 months
+    expect(dining.overBy).toBe(220); // 420 - 200
+
+    const housing = rows.find((r) => r.group === "Housing")!;
+    expect(housing.actual).toBe(2000);
+    expect(housing.monthlyCap).toBeNull();
+    expect(housing.cap).toBeNull();
+    expect(housing.overBy).toBeNull();
+
+    const transportation = rows.find((r) => r.group === "Transportation")!;
+    expect(transportation.actual).toBe(0);
   });
 });
