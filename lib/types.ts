@@ -95,3 +95,25 @@ export type CashPlacementNudgeResult = {
   needsRate: CashPlacementNeedsRate[];
   opportunities: CashPlacementOpportunity[];
 };
+
+/** Automated Savings Rules */
+export type SavingsRuleType = "split" | "roundup";
+export type SavingsRule = {
+  id: string;
+  type: SavingsRuleType;
+  active: boolean;
+  percent: number | null; // for "split": 0-100
+  increment: number | null; // for "roundup": 1 or 5
+};
+export type SavingsRulePerRule = {
+  ruleId: string;
+  type: SavingsRuleType;
+  total: number;
+};
+export type SavingsSimulationResult = {
+  perRule: SavingsRulePerRule[];
+  combinedTotal: number;
+};
+export type SavingsReport = SavingsSimulationResult & {
+  rules: SavingsRule[];
+};

@@ -8,8 +8,14 @@ import {
   cashflowStats,
   investingSummary,
   cashPlacementNudge,
+  savingsRulesSimulation,
 } from "@/lib/aggregations";
-import type { Txn, InvestmentAccount, CashPlacementAccount } from "@/lib/types";
+import type {
+  Txn,
+  InvestmentAccount,
+  CashPlacementAccount,
+  SavingsRule,
+} from "@/lib/types";
 
 const t = (o: Partial<Txn>): Txn => ({
   transactionId: Math.random().toString(),
@@ -223,6 +229,95 @@ describe("aggregations", () => {
         4.0
       );
       expect(result.opportunities.map((o) => o.accountId)).toEqual(["big", "small"]);
+    });
+  });
+
+  describe("savingsRulesSimulation", () => {
+    const savingsTxns: Txn[] = [
+      t({ isIncome: true, amount: 1000 }),
+      t({ isIncome: true, amount: 500 }),
+      t({ isIncome: false, amount: 4.3 }),
+      t({ isIncome: false, amount: 12.5 }),
+      t({ isIncome: false, amount: 9.0 }),
+    ];
+
+    it("split rule sums percent of income transactions only", () => {
+      const rule: SavingsRule = {
+        id: "r1",
+        type: "split",
+        active: true,
+        percent: 10,
+        increment: null,
+      };
+      const result = savingsRulesSimulation(savingsTxns, [rule]);
+      expect(result.perRule).toEqual([{ ruleId: "r1", type: "split", total: 150 }]);
+      expect(result.combinedTotal).toBe(150);
+    });
+
+    it("roundup rule sums round-up-to-nearest-$1 over expense transactions only", () => {
+      const rule: SavingsRule = {
+        id: "r2",
+        type: "roundup",
+        active: true,
+        percent: null,
+        increment: 1,
+      };
+      const result = savingsRulesSimulation(savingsTxns, [rule]);
+      // 4.30 -> 0.70, 12.50 -> 0.50, 9.00 -> 0 (exact multiple)
+      expect(result.perRule[0].total).toBeCloseTo(1.2, 5);
+    });
+
+    it("roundup rule at $5 increment", () => {
+      const rule: SavingsRule = {
+        id: "r3",
+        type: "roundup",
+        active: true,
+        percent: null,
+        increment: 5,
+      };
+      const result = savingsRulesSimulation(savingsTxns, [rule]);
+      // 4.30 -> 0.70, 12.50 -> 2.50, 9.00 -> 1.00
+      expect(result.perRule[0].total).toBeCloseTo(4.2, 5);
+    });
+
+    it("combines multiple active rules and excludes inactive ones", () => {
+      const split: SavingsRule = {
+        id: "r1",
+        type: "split",
+        active: true,
+        percent: 10,
+        increment: null,
+      };
+      const roundup: SavingsRule = {
+        id: "r2",
+        type: "roundup",
+        active: true,
+        percent: null,
+        increment: 1,
+      };
+      const inactive: SavingsRule = {
+        id: "r4",
+        type: "split",
+        active: false,
+        percent: 50,
+        increment: null,
+      };
+      const result = savingsRulesSimulation(savingsTxns, [split, roundup, inactive]);
+      expect(result.perRule).toHaveLength(2);
+      expect(result.combinedTotal).toBeCloseTo(151.2, 5);
+    });
+
+    it("returns zero totals for an empty transaction set", () => {
+      const rule: SavingsRule = {
+        id: "r1",
+        type: "split",
+        active: true,
+        percent: 10,
+        increment: null,
+      };
+      const result = savingsRulesSimulation([], [rule]);
+      expect(result.perRule).toEqual([{ ruleId: "r1", type: "split", total: 0 }]);
+      expect(result.combinedTotal).toBe(0);
     });
   });
 });

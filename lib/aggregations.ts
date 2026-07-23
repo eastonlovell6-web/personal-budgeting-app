@@ -12,6 +12,8 @@ import type {
   InvestingSummary,
   CashPlacementAccount,
   CashPlacementNudgeResult,
+  SavingsRule,
+  SavingsSimulationResult,
 } from "@/lib/types";
 
 function monthKey(d: Date): string {
@@ -228,4 +230,46 @@ export function cashPlacementNudge(
   opportunities.sort((a, b) => b.annualOpportunityCost - a.annualOpportunityCost);
 
   return { needsRate, opportunities };
+}
+
+/** Simulates active automated-savings rules against real transactions.
+ * Split rules apply percent% to income transactions; round-up rules round
+ * each expense transaction up to the nearest $1/$5 and sum the difference.
+ * Inactive rules are excluded from both perRule and combinedTotal. Uses
+ * integer-cents math for the round-up remainder to avoid floating-point
+ * drift. */
+export function savingsRulesSimulation(
+  txns: Txn[],
+  rules: SavingsRule[]
+): SavingsSimulationResult {
+  const perRule: SavingsSimulationResult["perRule"] = [];
+  let combinedTotal = 0;
+
+  for (const rule of rules) {
+    if (!rule.active) continue;
+
+    let total = 0;
+    if (rule.type === "split") {
+      const percent = rule.percent ?? 0;
+      for (const t of txns) {
+        if (!t.isIncome) continue;
+        total += (t.amount * percent) / 100;
+      }
+    } else {
+      const incrementCents = Math.round((rule.increment ?? 1) * 100);
+      for (const t of txns) {
+        if (t.isIncome) continue;
+        const amountCents = Math.round(t.amount * 100);
+        const remainder = amountCents % incrementCents;
+        if (remainder !== 0) total += (incrementCents - remainder) / 100;
+      }
+    }
+
+    total = Math.round(total * 100) / 100;
+    perRule.push({ ruleId: rule.id, type: rule.type, total });
+    combinedTotal += total;
+  }
+
+  combinedTotal = Math.round(combinedTotal * 100) / 100;
+  return { perRule, combinedTotal };
 }
