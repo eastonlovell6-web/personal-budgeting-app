@@ -21,7 +21,7 @@ works today. No other screen changes.
   with the Automated/Envelope mode toggle.
 - In Envelope mode, the Spending screen gains an "Envelope Caps" card below
   the existing donut/detailed-category-list, showing one row per expense
-  category group (the 8 non-Income entries in `GROUPS`,
+  category group (the 9 non-Income entries in `GROUPS`,
   `lib/categories.ts:8`) with an inline-editable monthly $ cap, actual
   spend, and a progress bar.
 - Caps scale with whatever date range is selected in the shared
@@ -35,7 +35,7 @@ works today. No other screen changes.
 
 ## Non-Goals (this pass)
 
-- **No per-detailed-category caps.** Caps are per group (8 groups), not per
+- **No per-detailed-category caps.** Caps are per group (9 groups), not per
   the ~50+ granular Plaid detailed categories already listed on Spending
   today — fewer numbers to manage, matches Monarch-style envelope
   budgeting, and reuses the same grouping already used for the Cash Flow
@@ -78,7 +78,7 @@ model AppSettings {
 }
 
 model CategoryCap {
-  group      String @id // one of the 8 non-Income GROUPS entries
+  group      String @id // one of the 9 non-Income GROUPS entries
   monthlyCap Float
 }
 ```
@@ -95,7 +95,7 @@ model CategoryCap {
 - `app/api/category-caps/route.ts` (new):
   - `GET`: returns all `CategoryCap` rows as `{ group, monthlyCap }[]`.
   - `PATCH`: body `{ group, monthlyCap }` — upserts one row. Validates
-    `group` is one of the 8 non-Income `GROUPS` entries and
+    `group` is one of the 9 non-Income `GROUPS` entries and
     `monthlyCap > 0`; 400 otherwise.
 - `lib/aggregations.ts`: new `spendingByGroup(txns)` — same filtering as
   `spendingByCategory` (excludes income/transfers), buckets by
@@ -106,8 +106,8 @@ model CategoryCap {
 - `app/api/reports/envelope/route.ts` (new):
   - `GET ?start=&end=`: queries transactions in range, runs
     `spendingByGroup`, fetches all `CategoryCap` rows, computes
-    `monthsInRange(start, end)`. Returns one entry per of the 8 non-Income
-    `GROUPS` (always all 8, so unspent/uncapped groups still show a row):
+    `monthsInRange(start, end)`. Returns one entry per of the 9 non-Income
+    `GROUPS` (always all 9, so unspent/uncapped groups still show a row):
     `{ group, emoji, actual, cap: monthlyCap * months | null, overBy:
     max(0, actual - cap) | null }`. `cap`/`overBy` are `null` when no
     `CategoryCap` row exists for that group.
@@ -161,7 +161,7 @@ model CategoryCap {
   total when summed) and `monthsInRange` (3/6/12-month presets, YTD at
   various points in the year, single-month edge case).
 - Manual verification: `npm run dev`, open Settings, switch to Envelope
-  mode, confirm the Envelope Caps card appears on Spending with all 8
+  mode, confirm the Envelope Caps card appears on Spending with all 9
   groups and "Set a cap" placeholders; set a cap inline, confirm the bar
   and `$actual/$cap` update and persist across reload; change the date
   range and confirm the cap scales (e.g. doubles going from "Last 3
@@ -174,7 +174,7 @@ model CategoryCap {
 ## Success Criteria
 
 - Mode toggle persists across reloads via `AppSettings.budgetingMode`.
-- Envelope Caps card renders only in Envelope mode, shows all 8 non-Income
+- Envelope Caps card renders only in Envelope mode, shows all 9 non-Income
   groups, and correctly scales caps to the selected date range.
 - Cap edits persist via inline editing, independent of mode — set once,
   visible again next time Envelope mode is active.
@@ -189,5 +189,5 @@ model CategoryCap {
 - Whether caps should eventually feed into the Cash Flow Sankey or a
   future Notifications screen (over-cap alerts) — explicitly deferred.
 - Whether "Set a cap" groups with zero activity should be hideable — not
-  addressed; all 8 always show for now, consistent with a fixed, small
+  addressed; all 9 always show for now, consistent with a fixed, small
   set of categories rather than a user-managed list like Goals.
