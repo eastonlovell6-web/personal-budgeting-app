@@ -17,6 +17,7 @@ export function presets(): Range[] {
   const end = endOfToday();
   const now = new Date();
   return [
+    { label: "Last month", start: startOfMonth(now, 0), end },
     { label: "Last 3 months", start: startOfMonth(now, 2), end },
     { label: "Last 6 months", start: startOfMonth(now, 5), end },
     { label: "Last 12 months", start: startOfMonth(now, 11), end },
@@ -28,7 +29,7 @@ export function presets(): Range[] {
   ];
 }
 
-export const DEFAULT_RANGE_INDEX = 1; // Last 6 months
+export const DEFAULT_RANGE_INDEX = 2; // Last 6 months
 
 export function DateRangePicker({
   value,

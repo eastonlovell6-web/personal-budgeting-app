@@ -8,8 +8,6 @@ import type {
   SpendingCategory,
   SankeyData,
   CashflowStats,
-  InvestmentAccount,
-  InvestingSummary,
   CashPlacementAccount,
   CashPlacementNudgeResult,
   SavingsRule,
@@ -167,21 +165,6 @@ export function cashflowSankey(txns: Txn[], investingTotal = 0): SankeyData {
   if (savings > 0) addLink(hub, addNode("sav:Savings", "Savings"), savings);
 
   return { nodes, links };
-}
-
-/** Portfolio summary: accounts sorted by balance descending (nulls last),
- * total excludes null balances rather than coercing them to 0. */
-export function investingSummary(accounts: InvestmentAccount[]): InvestingSummary {
-  const sorted = [...accounts].sort((a, b) => {
-    if (a.currentBalance == null) return 1;
-    if (b.currentBalance == null) return -1;
-    return b.currentBalance - a.currentBalance;
-  });
-  const total = accounts.reduce(
-    (sum, a) => (a.currentBalance == null ? sum : sum + a.currentBalance),
-    0
-  );
-  return { accounts: sorted, total };
 }
 
 /** Per-account cash placement check: which accounts need a rate entered,

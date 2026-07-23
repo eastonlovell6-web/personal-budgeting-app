@@ -58,19 +58,6 @@ export type CashflowReport = {
   stats: CashflowStats;
 };
 
-/** Investing report */
-export type InvestmentAccount = {
-  accountId: string;
-  name: string;
-  institution: string;
-  currentBalance: number | null;
-};
-export type InvestingSummary = {
-  accounts: InvestmentAccount[]; // sorted by balance desc, nulls last
-  total: number; // sum of non-null balances only
-};
-export type InvestingReport = InvestingSummary;
-
 /** Cash Placement Nudge */
 export type CashPlacementAccount = {
   accountId: string;

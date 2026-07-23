@@ -13,7 +13,6 @@ import { isoDate } from "@/lib/format";
 import { IncomeView } from "@/components/income/IncomeView";
 import { SpendingView } from "@/components/spending/SpendingView";
 import { CashflowView } from "@/components/cashflow/CashflowView";
-import { InvestingView } from "@/components/investing/InvestingView";
 import { SavingsView } from "@/components/savings/SavingsView";
 import { GoalsView } from "@/components/goals/GoalsView";
 import { CashPlacementNudge } from "@/components/nudge/CashPlacementNudge";
@@ -26,7 +25,6 @@ import type {
   IncomeReport,
   SpendingReport,
   CashflowReport,
-  InvestingReport,
   SavingsReport,
   Goal,
 } from "@/lib/types";
@@ -35,7 +33,6 @@ const ENDPOINT: Record<Tab, string> = {
   income: "/api/reports/income",
   spending: "/api/reports/spending",
   cashflow: "/api/reports/cashflow",
-  investing: "/api/reports/investing",
   savings: "/api/reports/savings",
   goals: "/api/goals",
 };
@@ -64,7 +61,6 @@ function Dashboard() {
     | IncomeReport
     | SpendingReport
     | CashflowReport
-    | InvestingReport
     | SavingsReport
     | Goal[]
     | null
@@ -135,8 +131,6 @@ function Dashboard() {
         <SpendingView data={data as SpendingReport} />
       ) : tab === "cashflow" ? (
         <CashflowView data={data as CashflowReport} />
-      ) : tab === "investing" ? (
-        <InvestingView data={data as InvestingReport} />
       ) : tab === "savings" ? (
         <SavingsView data={data as SavingsReport} onChange={load} />
       ) : (

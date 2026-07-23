@@ -6,13 +6,11 @@ import {
   spendingByCategory,
   cashflowSankey,
   cashflowStats,
-  investingSummary,
   cashPlacementNudge,
   savingsRulesSimulation,
 } from "@/lib/aggregations";
 import type {
   Txn,
-  InvestmentAccount,
   CashPlacementAccount,
   SavingsRule,
 } from "@/lib/types";
@@ -99,36 +97,6 @@ describe("aggregations", () => {
     // has an Income hub node and a Savings node (net positive)
     expect(s.nodes.some((n) => n.name === "Income")).toBe(true);
     expect(s.nodes.some((n) => n.name === "Savings")).toBe(true);
-  });
-
-  it("investingSummary sorts by balance descending", () => {
-    const accounts: InvestmentAccount[] = [
-      { accountId: "a1", name: "Brokerage", institution: "Robinhood", currentBalance: 5000 },
-      { accountId: "a2", name: "IRA", institution: "Robinhood", currentBalance: 20000 },
-      { accountId: "a3", name: "Crypto", institution: "Robinhood", currentBalance: 1200 },
-    ];
-    const s = investingSummary(accounts);
-    expect(s.accounts.map((a) => a.accountId)).toEqual(["a2", "a1", "a3"]);
-    expect(s.total).toBe(26200);
-  });
-
-  it("investingSummary excludes null balances from the total but keeps them in the list", () => {
-    const accounts: InvestmentAccount[] = [
-      { accountId: "a1", name: "Brokerage", institution: "Robinhood", currentBalance: 5000 },
-      { accountId: "a2", name: "Just linked", institution: "Robinhood", currentBalance: null },
-    ];
-    const s = investingSummary(accounts);
-    expect(s.total).toBe(5000);
-    expect(s.accounts).toHaveLength(2);
-    expect(s.accounts.find((a) => a.accountId === "a2")!.currentBalance).toBeNull();
-    // null balances sort last regardless of magnitude
-    expect(s.accounts[s.accounts.length - 1].accountId).toBe("a2");
-  });
-
-  it("investingSummary handles an empty account list", () => {
-    const s = investingSummary([]);
-    expect(s.accounts).toEqual([]);
-    expect(s.total).toBe(0);
   });
 
   it("cashflow stats include the investing total and default to 0", () => {
