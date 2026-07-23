@@ -6,6 +6,7 @@ import type {
   IncomeMonth,
   IncomeSummary,
   IncomeReport,
+  NetMonth,
   SpendingCategory,
   SpendingCategoryTransaction,
   SankeyData,
@@ -38,6 +39,23 @@ export function incomeByMonth(txns: Txn[]): IncomeMonth[] {
   return [...byMonth.values()].sort((a, b) => a.month.localeCompare(b.month));
 }
 
+/** Monthly income vs. expenses vs. net totals, sorted chronologically. */
+export function cashflowByMonth(txns: Txn[]): NetMonth[] {
+  const byMonth = new Map<string, NetMonth>();
+  for (const t of txns) {
+    const key = monthKey(t.date);
+    let row = byMonth.get(key);
+    if (!row) {
+      row = { month: key, income: 0, expenses: 0, net: 0 };
+      byMonth.set(key, row);
+    }
+    if (t.isIncome) row.income += t.amount;
+    else row.expenses += t.amount;
+    row.net = row.income - row.expenses;
+  }
+  return [...byMonth.values()].sort((a, b) => a.month.localeCompare(b.month));
+}
+
 /** Totals across the whole range for the income summary block. */
 export function incomeSummary(txns: Txn[]): IncomeSummary {
   let total = 0;
@@ -63,6 +81,7 @@ export function incomeReport(txns: Txn[]): IncomeReport {
     byMonth,
     sources: [...sourceSet].sort(),
     summary: incomeSummary(txns),
+    netByMonth: cashflowByMonth(txns),
   };
 }
 

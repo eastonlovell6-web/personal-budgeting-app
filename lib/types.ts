@@ -23,10 +23,17 @@ export type IncomeSummary = {
   count: number;
   largest: number;
 };
+export type NetMonth = {
+  month: string; // "YYYY-MM"
+  income: number;
+  expenses: number;
+  net: number;
+};
 export type IncomeReport = {
   byMonth: IncomeMonth[];
   sources: string[]; // distinct income source display names, for chart series
   summary: IncomeSummary;
+  netByMonth: NetMonth[];
 };
 
 /** Spending report */
