@@ -135,7 +135,7 @@ describe("aggregations", () => {
     expect(withInvesting.net).toBe(5630);
   });
 
-  it("cashflow sankey adds an Investing leaf and reduces Savings when investingTotal > 0", () => {
+  it("cashflow sankey never shows an Investing leaf and reduces Savings when investingTotal > 0", () => {
     const withoutInvesting = cashflowSankey(fixture);
     expect(withoutInvesting.nodes.some((n) => n.name === "Investing")).toBe(false);
     const savingsLinkBefore = withoutInvesting.links.find(
@@ -144,11 +144,7 @@ describe("aggregations", () => {
     expect(savingsLinkBefore.value).toBe(5630);
 
     const withInvesting = cashflowSankey(fixture, 1000);
-    expect(withInvesting.nodes.some((n) => n.name === "Investing")).toBe(true);
-    const investingLink = withInvesting.links.find(
-      (l) => withInvesting.nodes[l.target].name === "Investing"
-    )!;
-    expect(investingLink.value).toBe(1000);
+    expect(withInvesting.nodes.some((n) => n.name === "Investing")).toBe(false);
     const savingsLinkAfter = withInvesting.links.find(
       (l) => withInvesting.nodes[l.target].name === "Savings"
     )!;

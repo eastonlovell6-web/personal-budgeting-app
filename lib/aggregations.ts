@@ -155,12 +155,8 @@ export function cashflowSankey(txns: Txn[], investingTotal = 0): SankeyData {
     addLink(hub, addNode(`grp:${group}`, group), groups.get(group)!);
   }
 
-  // Investing (money transferred to investment accounts) as a leaf off the
-  // hub, added before Savings so Savings reflects the true leftover.
-  if (investingTotal > 0) {
-    addLink(hub, addNode("inv:Investing", "Investing"), investingTotal);
-  }
-
+  // Investing is shown as its own stat, not as a sankey leaf — only Savings
+  // (net minus what was invested) flows out of the hub below.
   // Savings (positive net, minus what was invested) as a leaf off the hub
   const net = totalIncome - totalExpense;
   const savings = net - investingTotal;
