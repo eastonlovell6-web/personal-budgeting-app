@@ -137,6 +137,17 @@ describe("aggregations", () => {
     expect(withInvesting.net).toBe(5630);
   });
 
+  it("cashflow stats compute savings as net minus investing, floored at 0", () => {
+    const noInvesting = cashflowStats(fixture);
+    expect(noInvesting.savings).toBe(5630); // net with no investing
+
+    const someInvesting = cashflowStats(fixture, 1000);
+    expect(someInvesting.savings).toBe(4630); // 5630 net - 1000 invested
+
+    const overInvested = cashflowStats(fixture, 6000);
+    expect(overInvested.savings).toBe(0); // invested more than net; floors at 0
+  });
+
   it("cashflow sankey never shows an Investing leaf and reduces Savings when investingTotal > 0", () => {
     const withoutInvesting = cashflowSankey(fixture);
     expect(withoutInvesting.nodes.some((n) => n.name === "Investing")).toBe(false);

@@ -113,7 +113,8 @@ export function cashflowStats(txns: Txn[], investingTotal = 0): CashflowStats {
   }
   const net = income - expenses;
   const savingsRate = income > 0 ? net / income : 0;
-  return { income, expenses, net, savingsRate, investing: investingTotal };
+  const savings = Math.max(0, net - investingTotal);
+  return { income, expenses, net, savingsRate, investing: investingTotal, savings };
 }
 
 /**
