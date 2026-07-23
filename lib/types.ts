@@ -125,3 +125,20 @@ export type Goal = {
   targetAmount: number;
   currentAmount: number;
 };
+
+/** Budgeting Mode Toggle */
+export type BudgetingMode = "automated" | "envelope";
+
+export type EnvelopeGroupProgress = {
+  group: string;
+  emoji: string;
+  actual: number; // spend in the selected range
+  monthlyCap: number | null; // raw user-entered monthly cap, null = not set
+  cap: number | null; // monthlyCap * months in the selected range, null if monthlyCap is null
+  overBy: number | null; // max(0, actual - cap), null if cap is null
+};
+
+export type EnvelopeReport = {
+  groups: EnvelopeGroupProgress[]; // always all 9 non-Income GROUPS entries
+  months: number; // number of calendar months the selected range touches
+};
