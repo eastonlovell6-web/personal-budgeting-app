@@ -1,11 +1,16 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
-import type { SpendingReport, SpendingCategory } from "@/lib/types";
+import type {
+  SpendingReport,
+  SpendingCategory,
+  SpendingCategoryTransaction,
+} from "@/lib/types";
 import { CATEGORICAL, OTHER_COLOR } from "@/lib/palette";
-import { money } from "@/lib/format";
+import { money, dayShort, isoDate } from "@/lib/format";
 import { Card } from "@/components/ui/Card";
+import type { Range } from "@/components/DateRangePicker";
 
 const TOP_N = 8;
 
@@ -20,8 +25,49 @@ function DonutTooltip({ active, payload }: any) {
   );
 }
 
-export function SpendingView({ data }: { data: SpendingReport }) {
+export function SpendingView({ data, range }: { data: SpendingReport; range: Range }) {
   const [expanded, setExpanded] = useState(false);
+  const [expandedCategory, setExpandedCategory] = useState<string | null>(null);
+  const [txnCache, setTxnCache] = useState<
+    Map<string, SpendingCategoryTransaction[] | "loading" | "error">
+  >(new Map());
+
+  // Collapse and drop cached transactions whenever the selected date range
+  // changes — the cache is keyed by category only, so a stale list for the
+  // old range must not be shown.
+  const rangeKey = `${isoDate(range.start)}|${isoDate(range.end)}`;
+  const rangeKeyRef = useRef(rangeKey);
+  rangeKeyRef.current = rangeKey;
+  useEffect(() => {
+    setExpandedCategory(null);
+    setTxnCache(new Map());
+  }, [rangeKey]);
+
+  function toggleCategory(detailed: string) {
+    if (expandedCategory === detailed) {
+      setExpandedCategory(null);
+      return;
+    }
+    setExpandedCategory(detailed);
+    if (txnCache.has(detailed)) return;
+
+    const requestRangeKey = rangeKey;
+    setTxnCache((m) => new Map(m).set(detailed, "loading"));
+    const qs = `?start=${isoDate(range.start)}&end=${isoDate(range.end)}&category=${encodeURIComponent(detailed)}`;
+    fetch(`/api/reports/spending/transactions${qs}`)
+      .then((res) => {
+        if (!res.ok) throw new Error(`spending transactions fetch failed: ${res.status}`);
+        return res.json();
+      })
+      .then((txns: SpendingCategoryTransaction[]) => {
+        if (rangeKeyRef.current !== requestRangeKey) return;
+        setTxnCache((m) => new Map(m).set(detailed, txns));
+      })
+      .catch(() => {
+        if (rangeKeyRef.current !== requestRangeKey) return;
+        setTxnCache((m) => new Map(m).set(detailed, "error"));
+      });
+  }
 
   // Donut: top N distinct slices + a folded "Other".
   const top = data.categories.slice(0, TOP_N);
@@ -77,6 +123,9 @@ export function SpendingView({ data }: { data: SpendingReport }) {
               category={c}
               color={i < TOP_N ? CATEGORICAL[i] : OTHER_COLOR}
               total={data.total}
+              expanded={expandedCategory === c.detailed}
+              onToggle={() => toggleCategory(c.detailed)}
+              transactions={txnCache.get(c.detailed)}
             />
           ))}
         </div>
@@ -97,27 +146,59 @@ function CategoryRow({
   category,
   color,
   total,
+  expanded,
+  onToggle,
+  transactions,
 }: {
   category: SpendingCategory;
   color: string;
   total: number;
+  expanded: boolean;
+  onToggle: () => void;
+  transactions: SpendingCategoryTransaction[] | "loading" | "error" | undefined;
 }) {
   const pct = total > 0 ? (category.amount / total) * 100 : 0;
   return (
-    <div className="flex items-center gap-3 border-t border-border py-2.5 first:border-t-0">
-      <span
-        className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-sm"
-        style={{ background: color + "22" }}
+    <div className="border-t border-border first:border-t-0">
+      <button
+        onClick={onToggle}
+        className="flex w-full items-center gap-3 py-2.5 text-left"
       >
-        {category.emoji}
-      </span>
-      <div className="min-w-0 flex-1">
-        <div className="truncate text-sm text-foreground">{category.display}</div>
-        <div className="text-xs text-muted">{pct.toFixed(1)}%</div>
-      </div>
-      <div className="tabular-nums text-sm text-foreground">
-        {money(category.amount)}
-      </div>
+        <span
+          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-sm"
+          style={{ background: color + "22" }}
+        >
+          {category.emoji}
+        </span>
+        <div className="min-w-0 flex-1">
+          <div className="truncate text-sm text-foreground">{category.display}</div>
+          <div className="text-xs text-muted">{pct.toFixed(1)}%</div>
+        </div>
+        <div className="tabular-nums text-sm text-foreground">
+          {money(category.amount)}
+        </div>
+      </button>
+      {expanded && (
+        <div className="flex flex-col pb-2.5 pl-11">
+          {transactions === "loading" || transactions === undefined ? (
+            <div className="py-1.5 text-xs text-muted">Loading…</div>
+          ) : transactions === "error" ? (
+            <div className="py-1.5 text-xs text-muted">Couldn't load transactions.</div>
+          ) : (
+            transactions.map((t) => <TransactionRow key={t.transactionId} txn={t} />)
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function TransactionRow({ txn }: { txn: SpendingCategoryTransaction }) {
+  return (
+    <div className="flex items-center gap-3 py-1.5">
+      <div className="w-12 shrink-0 text-xs text-muted">{dayShort(new Date(txn.date))}</div>
+      <div className="min-w-0 flex-1 truncate text-sm text-foreground">{txn.name}</div>
+      <div className="tabular-nums text-sm text-muted">{money(txn.amount)}</div>
     </div>
   );
 }

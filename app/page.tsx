@@ -128,7 +128,7 @@ function Dashboard() {
       ) : tab === "income" ? (
         <IncomeView data={data as IncomeReport} range={range} />
       ) : tab === "spending" ? (
-        <SpendingView data={data as SpendingReport} />
+        <SpendingView data={data as SpendingReport} range={range} />
       ) : tab === "cashflow" ? (
         <CashflowView data={data as CashflowReport} />
       ) : tab === "savings" ? (
