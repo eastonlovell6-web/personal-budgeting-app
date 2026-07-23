@@ -41,11 +41,6 @@ export function monthShort(ym: string): string {
   });
 }
 
-/** Date -> "Jul 18" (short date label for transaction rows). */
-export function dayShort(d: Date): string {
-  return d.toLocaleString("en-US", { month: "short", day: "numeric", timeZone: "UTC" });
-}
-
 /** Human date-range label, e.g. "Jan 1 – Jun 30, 2026". */
 export function rangeLabel(start: Date, end: Date): string {
   const s = start.toLocaleString("en-US", { month: "short", day: "numeric", timeZone: "UTC" });
