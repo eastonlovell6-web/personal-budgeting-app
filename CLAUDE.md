@@ -51,7 +51,7 @@ Each covers purpose, layout, data contract, and the fintech UX principles
 | Income | Shipped | `claudemd/screens/income.md` |
 | Spending | Shipped | `claudemd/screens/spending.md` |
 | Cash Flow | Shipped | `claudemd/screens/cashflow.md` |
-| Cash Placement Nudge | Planned | `claudemd/screens/cash-placement-nudge.md` |
+| Cash Placement Nudge | Shipped | `claudemd/screens/cash-placement-nudge.md` |
 | Automated Savings Rules | Planned | `claudemd/screens/automated-savings-rules.md` |
 | Goals (savings buckets) | Planned | `claudemd/screens/goals.md` |
 | Investing Education (Roth IRA) | Planned | `claudemd/screens/investing-education.md` |

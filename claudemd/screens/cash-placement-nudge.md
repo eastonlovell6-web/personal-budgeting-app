@@ -10,29 +10,31 @@ near-zero-effort, high-conviction win.
 
 ## Status
 
-Planned — not started in code. Source: `Projects/budgeting-app.md`
-("Cash Placement Nudge" section) in the Obsidian vault.
+Shipped. Source: `Projects/budgeting-app.md` ("Cash Placement Nudge"
+section) in the Obsidian vault.
 
 ## Key Files
 
-None yet. First implementation should follow the same
-`superpowers:brainstorming` → `writing-plans` flow used for v1 — see
-`docs/superpowers/plans/2026-07-19-personal-budgeting-app.md` as the plan-
-structure template.
+- `components/nudge/CashPlacementNudge.tsx` — dashboard card
+- `app/api/nudges/cash-placement/route.ts` — nudge data endpoint
+- `app/api/accounts/[accountId]/route.ts` — PATCH for setting an account's APY
+- `lib/aggregations.ts` — `cashPlacementNudge` aggregation
+- `lib/settings.ts` — snooze/dismiss state (`AppSettings`)
+- `lib/types.ts` — nudge-related types
+- `app/page.tsx` — wires the card into the dashboard
 
 ## Layout / UI Spec
 
-Sketch only: likely a dismissible card on the dashboard (or its own tab)
-surfacing the user's current cash-account APY vs. a reference HYSA rate,
-with a clear informational CTA — no specific bank/product recommendation,
-per the Trust principle below.
+Dismissible card on the dashboard surfacing the user's current cash-account
+APY vs. a reference HYSA rate, with a clear informational CTA — no specific
+bank/product recommendation, per the Trust principle below. Fully hides
+(not just collapses) while snoozed.
 
 ## Data Contract
 
-Not yet defined. Open question: whether this needs a manually-entered
-"what does your account currently earn" input, or can be inferred from
-Plaid `account.type`/`subtype` (Plaid generally doesn't expose APY, so
-manual entry is the likely path).
+Manual entry: `Account.apy` is a user-entered field (Plaid doesn't expose
+APY), set via `PATCH /api/accounts/:accountId`. Snooze state lives in
+`AppSettings`.
 
 ## Fintech UX Principles Applied
 
