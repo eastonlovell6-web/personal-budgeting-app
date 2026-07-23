@@ -10,3 +10,4 @@ prisma/dev.db*
 .claude-flow/
 
 .worktrees/
+.claude/worktrees/
