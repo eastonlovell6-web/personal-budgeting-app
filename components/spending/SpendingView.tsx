@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
 import type {
   SpendingReport,
@@ -36,6 +36,8 @@ export function SpendingView({ data, range }: { data: SpendingReport; range: Ran
   // changes — the cache is keyed by category only, so a stale list for the
   // old range must not be shown.
   const rangeKey = `${isoDate(range.start)}|${isoDate(range.end)}`;
+  const rangeKeyRef = useRef(rangeKey);
+  rangeKeyRef.current = rangeKey;
   useEffect(() => {
     setExpandedCategory(null);
     setTxnCache(new Map());
@@ -49,14 +51,17 @@ export function SpendingView({ data, range }: { data: SpendingReport; range: Ran
     setExpandedCategory(detailed);
     if (txnCache.has(detailed)) return;
 
+    const requestRangeKey = rangeKey;
     setTxnCache((m) => new Map(m).set(detailed, "loading"));
     const qs = `?start=${isoDate(range.start)}&end=${isoDate(range.end)}&category=${encodeURIComponent(detailed)}`;
     fetch(`/api/reports/spending/transactions${qs}`)
       .then((res) => res.json())
       .then((txns: SpendingCategoryTransaction[]) => {
+        if (rangeKeyRef.current !== requestRangeKey) return;
         setTxnCache((m) => new Map(m).set(detailed, txns));
       })
       .catch(() => {
+        if (rangeKeyRef.current !== requestRangeKey) return;
         setTxnCache((m) => {
           const next = new Map(m);
           next.delete(detailed);
