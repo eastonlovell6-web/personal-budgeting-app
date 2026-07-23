@@ -17,6 +17,7 @@ import { InvestingView } from "@/components/investing/InvestingView";
 import { SavingsView } from "@/components/savings/SavingsView";
 import { GoalsView } from "@/components/goals/GoalsView";
 import { CashPlacementNudge } from "@/components/nudge/CashPlacementNudge";
+import { SettingsPanel } from "@/components/SettingsPanel";
 import {
   ConnectEmptyState,
   AddAccountButton,
@@ -29,6 +30,7 @@ import type {
   InvestingReport,
   SavingsReport,
   Goal,
+  BudgetingMode,
 } from "@/lib/types";
 
 const ENDPOINT: Record<Tab, string> = {
@@ -73,6 +75,23 @@ function Dashboard() {
   // view with another tab's data during the fetch after a switch.
   const [dataKey, setDataKey] = useState<string>("");
 
+  const [budgetingMode, setBudgetingMode] = useState<BudgetingMode>("automated");
+
+  useEffect(() => {
+    fetch("/api/settings")
+      .then((r) => r.json())
+      .then((s) => setBudgetingMode(s.budgetingMode));
+  }, []);
+
+  const handleModeChange = useCallback(async (mode: BudgetingMode) => {
+    setBudgetingMode(mode);
+    await fetch("/api/settings", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ budgetingMode: mode }),
+    });
+  }, []);
+
   const key = `${tab}|${isoDate(range.start)}|${isoDate(range.end)}`;
 
   const load = useCallback(async () => {
@@ -115,6 +134,7 @@ function Dashboard() {
         <h1 className="text-lg font-semibold">Reports</h1>
         <div className="flex items-center gap-2">
           {!empty && <AddAccountButton onLinked={load} />}
+          <SettingsPanel value={budgetingMode} onChange={handleModeChange} />
           <DateRangePicker value={range} onChange={setRange} />
         </div>
       </header>
@@ -132,7 +152,11 @@ function Dashboard() {
       ) : tab === "income" ? (
         <IncomeView data={data as IncomeReport} range={range} />
       ) : tab === "spending" ? (
-        <SpendingView data={data as SpendingReport} />
+        <SpendingView
+          data={data as SpendingReport}
+          range={range}
+          budgetingMode={budgetingMode}
+        />
       ) : tab === "cashflow" ? (
         <CashflowView data={data as CashflowReport} />
       ) : tab === "investing" ? (

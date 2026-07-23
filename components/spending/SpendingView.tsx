@@ -1,11 +1,18 @@
 "use client";
 
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
-import type { SpendingReport, SpendingCategory } from "@/lib/types";
+import type {
+  SpendingReport,
+  SpendingCategory,
+  BudgetingMode,
+  EnvelopeReport,
+} from "@/lib/types";
+import type { Range } from "@/components/DateRangePicker";
 import { CATEGORICAL, OTHER_COLOR } from "@/lib/palette";
-import { money } from "@/lib/format";
+import { money, isoDate } from "@/lib/format";
 import { Card } from "@/components/ui/Card";
+import { EnvelopeCapsCard } from "@/components/spending/EnvelopeCapsCard";
 
 const TOP_N = 8;
 
@@ -20,8 +27,31 @@ function DonutTooltip({ active, payload }: any) {
   );
 }
 
-export function SpendingView({ data }: { data: SpendingReport }) {
+export function SpendingView({
+  data,
+  range,
+  budgetingMode,
+}: {
+  data: SpendingReport;
+  range: Range;
+  budgetingMode: BudgetingMode;
+}) {
   const [expanded, setExpanded] = useState(false);
+  const [envelope, setEnvelope] = useState<EnvelopeReport | null>(null);
+
+  const loadEnvelope = useCallback(async () => {
+    if (budgetingMode !== "envelope") {
+      setEnvelope(null);
+      return;
+    }
+    const qs = `?start=${isoDate(range.start)}&end=${isoDate(range.end)}`;
+    const res = await fetch(`/api/reports/envelope${qs}`);
+    setEnvelope(await res.json());
+  }, [budgetingMode, range]);
+
+  useEffect(() => {
+    loadEnvelope();
+  }, [loadEnvelope]);
 
   // Donut: top N distinct slices + a folded "Other".
   const top = data.categories.slice(0, TOP_N);
@@ -89,6 +119,10 @@ export function SpendingView({ data }: { data: SpendingReport }) {
           </button>
         )}
       </Card>
+
+      {budgetingMode === "envelope" && envelope && (
+        <EnvelopeCapsCard groups={envelope.groups} onCapChange={loadEnvelope} />
+      )}
     </div>
   );
 }
