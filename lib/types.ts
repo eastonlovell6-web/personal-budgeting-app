@@ -59,6 +59,7 @@ export type CashflowStats = {
   net: number;
   savingsRate: number;
   investing: number;
+  savings: number;
 };
 export type CashflowReport = {
   sankey: SankeyData;
