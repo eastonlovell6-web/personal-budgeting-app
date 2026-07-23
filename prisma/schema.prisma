@@ -49,6 +49,7 @@ model AppSettings {
   id                String    @id @default("singleton")
   referenceApy      Float?
   nudgeSnoozedUntil DateTime?
+  budgetingMode     String    @default("automated")
 }
 
 model SavingsRule {
