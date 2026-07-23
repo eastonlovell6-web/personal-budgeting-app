@@ -7,6 +7,7 @@ import {
   transactionsForCategory,
   cashflowSankey,
   cashflowStats,
+  cashflowByMonth,
   cashPlacementNudge,
   savingsRulesSimulation,
 } from "@/lib/aggregations";
@@ -61,6 +62,21 @@ describe("aggregations", () => {
     const rep = incomeReport(fixture);
     expect(rep.sources).toContain("Paychecks");
     expect(rep.sources).toContain("Interest");
+    expect(rep.netByMonth.map((r) => r.month)).toEqual(["2026-01", "2026-02"]);
+  });
+
+  it("cashflow by month buckets income, expenses, and net", () => {
+    const rows = cashflowByMonth(fixture);
+    const jan = rows.find((r) => r.month === "2026-01")!;
+    expect(jan.income).toBe(4050);
+    expect(jan.expenses).toBe(2420);
+    expect(jan.net).toBe(1630);
+    const feb = rows.find((r) => r.month === "2026-02")!;
+    expect(feb.income).toBe(4000);
+    expect(feb.expenses).toBe(0);
+    expect(feb.net).toBe(4000);
+    // sorted chronologically
+    expect(rows.map((r) => r.month)).toEqual(["2026-01", "2026-02"]);
   });
 
   it("spending groups by category desc, income excluded", () => {
