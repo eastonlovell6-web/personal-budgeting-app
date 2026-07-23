@@ -50,3 +50,12 @@ model AppSettings {
   referenceApy      Float?
   nudgeSnoozedUntil DateTime?
 }
+
+model SavingsRule {
+  id        String   @id @default(cuid())
+  type      String   // "split" | "roundup"
+  active    Boolean  @default(true)
+  percent   Float?   // for "split": 0-100
+  increment Int?     // for "roundup": 1 or 5
+  createdAt DateTime @default(now())
+}
