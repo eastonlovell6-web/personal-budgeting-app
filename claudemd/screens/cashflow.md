@@ -15,8 +15,9 @@ Shipped — commit `d081540` (report endpoint) + `1b05a89` (view) + `ad48451`
 
 - `components/cashflow/CashflowView.tsx:8` — composes `StatRow` +
   `SankeyChart`.
-- `components/cashflow/StatRow.tsx:5` — 4-stat grid: Total income, Total
-  expenses, Net income (colored by sign), Savings rate %.
+- `components/cashflow/StatRow.tsx:5` — 6-stat grid: Total income, Total
+  expenses, Net income (colored by sign), Savings rate %, Savings
+  (net minus investing, floored at $0), Investing.
 - `components/cashflow/SankeyChart.tsx:45` — d3-sankey layout + SVG render;
   `nodeColors()` (`SankeyChart.tsx:22`) colors by role (income/hub/savings
   green, expense groups by stable categorical hue, leaves inherit parent).
@@ -30,9 +31,9 @@ Shipped — commit `d081540` (report endpoint) + `1b05a89` (view) + `ad48451`
 
 ## Layout / UI Spec
 
-`StatRow` (2x2 grid of stat cards) above a Sankey card; each Sankey node is
-labeled with name + amount + percentage of the Income hub total; links are
-colored by target node, translucent.
+`StatRow` (2-column grid, 6 stat cards) above a Sankey card; each Sankey
+node is labeled with name + amount + percentage of the Income hub total;
+links are colored by target node, translucent.
 
 ## Data Contract
 
