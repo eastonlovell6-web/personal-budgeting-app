@@ -10,6 +10,8 @@ import type {
   CashflowStats,
   InvestmentAccount,
   InvestingSummary,
+  CashPlacementAccount,
+  CashPlacementNudgeResult,
 } from "@/lib/types";
 
 function monthKey(d: Date): string {
@@ -182,4 +184,52 @@ export function investingSummary(accounts: InvestmentAccount[]): InvestingSummar
     0
   );
   return { accounts: sorted, total };
+}
+
+/** Per-account cash placement check: which accounts need a rate entered,
+ * and which have a meaningful, user-actionable gap vs. the reference rate.
+ * Only considers accounts at/above minBalance; returns nothing at all when
+ * referenceApy hasn't been set yet (the UI shows a one-time setup prompt
+ * instead). Accounts whose gap is below minGapPP are dropped entirely —
+ * not "fine", just not worth surfacing. */
+export function cashPlacementNudge(
+  accounts: CashPlacementAccount[],
+  referenceApy: number | null,
+  opts?: { minGapPP?: number; minBalance?: number }
+): CashPlacementNudgeResult {
+  if (referenceApy == null) return { needsRate: [], opportunities: [] };
+
+  const minGapPP = opts?.minGapPP ?? 0.5;
+  const minBalance = opts?.minBalance ?? 500;
+
+  const eligible = accounts.filter(
+    (a) => a.currentBalance != null && a.currentBalance >= minBalance
+  );
+
+  const needsRate: CashPlacementNudgeResult["needsRate"] = [];
+  const opportunities: CashPlacementNudgeResult["opportunities"] = [];
+
+  for (const a of eligible) {
+    const balance = a.currentBalance!;
+    if (a.apy == null) {
+      needsRate.push({ accountId: a.accountId, name: a.name, balance });
+      continue;
+    }
+    const gapPP = Math.round((referenceApy - a.apy) * 100) / 100;
+    if (gapPP >= minGapPP) {
+      const annualOpportunityCost = Math.round((balance * gapPP) / 100 * 100) / 100;
+      opportunities.push({
+        accountId: a.accountId,
+        name: a.name,
+        balance,
+        apy: a.apy,
+        gapPP,
+        annualOpportunityCost,
+      });
+    }
+  }
+
+  opportunities.sort((a, b) => b.annualOpportunityCost - a.annualOpportunityCost);
+
+  return { needsRate, opportunities };
 }

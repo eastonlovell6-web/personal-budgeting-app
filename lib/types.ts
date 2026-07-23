@@ -70,3 +70,28 @@ export type InvestingSummary = {
   total: number; // sum of non-null balances only
 };
 export type InvestingReport = InvestingSummary;
+
+/** Cash Placement Nudge */
+export type CashPlacementAccount = {
+  accountId: string;
+  name: string;
+  currentBalance: number | null;
+  apy: number | null; // user-entered current APY, percent (e.g. 0.4 = 0.4%)
+};
+export type CashPlacementNeedsRate = {
+  accountId: string;
+  name: string;
+  balance: number;
+};
+export type CashPlacementOpportunity = {
+  accountId: string;
+  name: string;
+  balance: number;
+  apy: number;
+  gapPP: number; // referenceApy - apy, in percentage points
+  annualOpportunityCost: number; // balance * gapPP / 100
+};
+export type CashPlacementNudgeResult = {
+  needsRate: CashPlacementNeedsRate[];
+  opportunities: CashPlacementOpportunity[];
+};
