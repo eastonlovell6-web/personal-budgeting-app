@@ -117,3 +117,11 @@ export type SavingsSimulationResult = {
 export type SavingsReport = SavingsSimulationResult & {
   rules: SavingsRule[];
 };
+
+/** Goals (Savings Buckets) */
+export type Goal = {
+  id: string;
+  name: string;
+  targetAmount: number;
+  currentAmount: number;
+};
