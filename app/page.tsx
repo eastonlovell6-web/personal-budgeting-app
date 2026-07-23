@@ -15,6 +15,7 @@ import { SpendingView } from "@/components/spending/SpendingView";
 import { CashflowView } from "@/components/cashflow/CashflowView";
 import { InvestingView } from "@/components/investing/InvestingView";
 import { SavingsView } from "@/components/savings/SavingsView";
+import { GoalsView } from "@/components/goals/GoalsView";
 import { CashPlacementNudge } from "@/components/nudge/CashPlacementNudge";
 import {
   ConnectEmptyState,
@@ -27,6 +28,7 @@ import type {
   CashflowReport,
   InvestingReport,
   SavingsReport,
+  Goal,
 } from "@/lib/types";
 
 const ENDPOINT: Record<Tab, string> = {
@@ -35,6 +37,7 @@ const ENDPOINT: Record<Tab, string> = {
   cashflow: "/api/reports/cashflow",
   investing: "/api/reports/investing",
   savings: "/api/reports/savings",
+  goals: "/api/goals",
 };
 
 export default function Home() {
@@ -58,7 +61,13 @@ function Dashboard() {
   const [tab, setTab] = useState<Tab>("income");
   const [range, setRange] = useState<Range>(() => presets()[DEFAULT_RANGE_INDEX]);
   const [data, setData] = useState<
-    IncomeReport | SpendingReport | CashflowReport | InvestingReport | SavingsReport | null
+    | IncomeReport
+    | SpendingReport
+    | CashflowReport
+    | InvestingReport
+    | SavingsReport
+    | Goal[]
+    | null
   >(null);
   // Which (tab,range) the loaded data belongs to — guards against rendering a
   // view with another tab's data during the fetch after a switch.
@@ -128,8 +137,10 @@ function Dashboard() {
         <CashflowView data={data as CashflowReport} />
       ) : tab === "investing" ? (
         <InvestingView data={data as InvestingReport} />
-      ) : (
+      ) : tab === "savings" ? (
         <SavingsView data={data as SavingsReport} onChange={load} />
+      ) : (
+        <GoalsView data={data as Goal[]} onChange={load} />
       )}
     </main>
   );

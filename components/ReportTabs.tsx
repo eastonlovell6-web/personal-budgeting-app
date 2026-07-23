@@ -1,6 +1,6 @@
 "use client";
 
-export type Tab = "income" | "spending" | "cashflow" | "investing" | "savings";
+export type Tab = "income" | "spending" | "cashflow" | "investing" | "savings" | "goals";
 
 const TABS: { id: Tab; label: string }[] = [
   { id: "income", label: "Income" },
@@ -8,6 +8,7 @@ const TABS: { id: Tab; label: string }[] = [
   { id: "cashflow", label: "Cash Flow" },
   { id: "investing", label: "Investing" },
   { id: "savings", label: "Savings" },
+  { id: "goals", label: "Goals" },
 ];
 
 export function ReportTabs({
