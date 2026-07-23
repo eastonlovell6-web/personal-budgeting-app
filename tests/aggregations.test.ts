@@ -7,8 +7,9 @@ import {
   cashflowSankey,
   cashflowStats,
   investingSummary,
+  cashPlacementNudge,
 } from "@/lib/aggregations";
-import type { Txn, InvestmentAccount } from "@/lib/types";
+import type { Txn, InvestmentAccount, CashPlacementAccount } from "@/lib/types";
 
 const t = (o: Partial<Txn>): Txn => ({
   transactionId: Math.random().toString(),
@@ -154,5 +155,74 @@ describe("aggregations", () => {
   it("cashflow sankey omits the Investing leaf when investingTotal is 0", () => {
     const s = cashflowSankey(fixture, 0);
     expect(s.nodes.some((n) => n.name === "Investing")).toBe(false);
+  });
+
+  describe("cashPlacementNudge", () => {
+    const acc = (o: Partial<CashPlacementAccount>): CashPlacementAccount => ({
+      accountId: Math.random().toString(),
+      name: "Checking",
+      currentBalance: 1000,
+      apy: null,
+      ...o,
+    });
+
+    it("returns nothing when no reference rate is set yet", () => {
+      const result = cashPlacementNudge(
+        [acc({ apy: null }), acc({ apy: 0.1 })],
+        null
+      );
+      expect(result.needsRate).toEqual([]);
+      expect(result.opportunities).toEqual([]);
+    });
+
+    it("excludes accounts below the minimum balance", () => {
+      const result = cashPlacementNudge([acc({ currentBalance: 400, apy: null })], 4.0);
+      expect(result.needsRate).toEqual([]);
+    });
+
+    it("flags accounts with no APY entered as needing a rate", () => {
+      const result = cashPlacementNudge(
+        [acc({ accountId: "a1", name: "Savings", currentBalance: 1000, apy: null })],
+        4.0
+      );
+      expect(result.needsRate).toEqual([{ accountId: "a1", name: "Savings", balance: 1000 }]);
+    });
+
+    it("excludes accounts whose gap is below the threshold", () => {
+      const result = cashPlacementNudge(
+        [acc({ currentBalance: 1000, apy: 3.6 })],
+        4.0
+      );
+      expect(result.opportunities).toEqual([]);
+      expect(result.needsRate).toEqual([]);
+    });
+
+    it("includes accounts at/above the gap threshold with correct gapPP and annualOpportunityCost", () => {
+      const result = cashPlacementNudge(
+        [acc({ accountId: "a2", name: "Old Savings", currentBalance: 10000, apy: 0.1 })],
+        4.1
+      );
+      expect(result.opportunities).toEqual([
+        {
+          accountId: "a2",
+          name: "Old Savings",
+          balance: 10000,
+          apy: 0.1,
+          gapPP: 4.0,
+          annualOpportunityCost: 400,
+        },
+      ]);
+    });
+
+    it("sorts opportunities by annual opportunity cost descending", () => {
+      const result = cashPlacementNudge(
+        [
+          acc({ accountId: "small", currentBalance: 1000, apy: 0 }), // gap 4.0, cost 40
+          acc({ accountId: "big", currentBalance: 50000, apy: 0 }), // gap 4.0, cost 2000
+        ],
+        4.0
+      );
+      expect(result.opportunities.map((o) => o.accountId)).toEqual(["big", "small"]);
+    });
   });
 });

@@ -14,6 +14,7 @@ import { IncomeView } from "@/components/income/IncomeView";
 import { SpendingView } from "@/components/spending/SpendingView";
 import { CashflowView } from "@/components/cashflow/CashflowView";
 import { InvestingView } from "@/components/investing/InvestingView";
+import { CashPlacementNudge } from "@/components/nudge/CashPlacementNudge";
 import {
   ConnectEmptyState,
   AddAccountButton,
@@ -105,6 +106,8 @@ function Dashboard() {
           <DateRangePicker value={range} onChange={setRange} />
         </div>
       </header>
+
+      <CashPlacementNudge />
 
       <ReportTabs value={tab} onChange={setTab} />
 

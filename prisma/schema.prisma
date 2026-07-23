@@ -24,6 +24,7 @@ model Account {
   name           String
   type           String
   currentBalance Float?
+  apy            Float?
   updatedAt      DateTime      @default(now())
   transactions   Transaction[]
 }
@@ -42,4 +43,10 @@ model Transaction {
   pending       Boolean  @default(false)
 
   @@index([date])
+}
+
+model AppSettings {
+  id                String    @id @default("singleton")
+  referenceApy      Float?
+  nudgeSnoozedUntil DateTime?
 }
