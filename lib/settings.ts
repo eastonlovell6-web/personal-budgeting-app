@@ -8,6 +8,7 @@ export async function getAppSettings() {
       id: SETTINGS_ID,
       referenceApy: null,
       nudgeSnoozedUntil: null,
+      budgetingMode: "automated",
     }
   );
 }
@@ -15,6 +16,7 @@ export async function getAppSettings() {
 export async function updateAppSettings(patch: {
   referenceApy?: number;
   nudgeSnoozedUntil?: Date;
+  budgetingMode?: string;
 }) {
   return prisma.appSettings.upsert({
     where: { id: SETTINGS_ID },

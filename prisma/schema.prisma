@@ -49,6 +49,7 @@ model AppSettings {
   id                String    @id @default("singleton")
   referenceApy      Float?
   nudgeSnoozedUntil DateTime?
+  budgetingMode     String    @default("automated")
 }
 
 model SavingsRule {
@@ -66,4 +67,9 @@ model Goal {
   targetAmount  Float
   currentAmount Float    @default(0)
   createdAt     DateTime @default(now())
+}
+
+model CategoryCap {
+  group      String @id
+  monthlyCap Float
 }
