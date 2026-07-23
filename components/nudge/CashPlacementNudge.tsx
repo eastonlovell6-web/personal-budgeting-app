@@ -31,8 +31,9 @@ export function CashPlacementNudge() {
   }, [load]);
 
   const saveReferenceApy = useCallback(async () => {
-    const value = Number(referenceInput);
-    if (!Number.isFinite(value)) return;
+    const trimmed = referenceInput.trim();
+    const value = Number(trimmed);
+    if (trimmed === "" || !Number.isFinite(value)) return;
     await fetch("/api/nudges/cash-placement", {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
@@ -44,8 +45,9 @@ export function CashPlacementNudge() {
 
   const saveAccountApy = useCallback(
     async (accountId: string) => {
-      const value = Number(rateInputs[accountId]);
-      if (!Number.isFinite(value)) return;
+      const trimmed = (rateInputs[accountId] ?? "").trim();
+      const value = Number(trimmed);
+      if (trimmed === "" || !Number.isFinite(value)) return;
       await fetch(`/api/accounts/${accountId}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
