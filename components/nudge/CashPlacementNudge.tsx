@@ -69,6 +69,8 @@ export function CashPlacementNudge() {
   }, []);
 
   if (dismissed || !data) return null;
+  const snoozed = data.snoozedUntil != null && new Date(data.snoozedUntil) > new Date();
+  if (snoozed) return null;
   const hasContent =
     data.referenceApy == null ||
     data.needsRate.length > 0 ||
