@@ -1,4 +1,4 @@
-# Budget — Personal Budgeting App
+# Money Moves — Personal Budgeting App
 
 A personal, single-user budgeting PWA modeled on Monarch Money. Connects to
 the user's bank via Plaid, syncs transactions into a local database, and
@@ -25,7 +25,9 @@ screen as a PWA — no App Store.
 - **Money formatting**: `$1,234.56` via `lib/format.ts` (`money`, `money0`,
   `moneyCompact`) — never format currency inline.
 - **Dark theme only** — tokens in `app/globals.css`; don't hardcode colors,
-  use the CSS variables / `lib/palette.ts`.
+  use the CSS variables / `lib/palette.ts`. Follow `claudemd/design-system.md`
+  (the "Money Moves" system) for anything color/type/component-related — it's
+  the source of truth this repo's tokens are meant to match.
 - **Don't hardcode financial figures that go stale** (APY rates, Roth IRA
   limits) once those features exist — pull from a source that can be
   updated. See `claudemd/best-practices.md`.
@@ -37,6 +39,14 @@ screen as a PWA — no App Store.
 - `npm test` — Vitest (categories, aggregations, crypto)
 - `npm run seed` — inserts 6 months of fake transactions (no Plaid needed)
 - `npx prisma migrate dev` — apply schema changes
+
+## Design System
+
+`claudemd/design-system.md` is the "Money Moves" design system (colors, type
+scale, spacing/radius, components) — read it before any UI change, alongside
+the screen-specific doc below. `app/globals.css` and `lib/palette.ts` were
+brought into alignment with it on 2026-07-24; see that file's "Applied so far
+vs. still open" section for what's done and what's still ad-hoc.
 
 ## Screen-by-Screen Docs
 
@@ -52,8 +62,8 @@ Each covers purpose, layout, data contract, and the fintech UX principles
 | Spending | Shipped | `claudemd/screens/spending.md` |
 | Cash Flow | Shipped | `claudemd/screens/cashflow.md` |
 | Cash Placement Nudge | Shipped | `claudemd/screens/cash-placement-nudge.md` |
-| Automated Savings Rules | Planned | `claudemd/screens/automated-savings-rules.md` |
-| Goals (savings buckets) | Planned | `claudemd/screens/goals.md` |
+| Automated Savings Rules | Shipped (corrected 2026-07-24 — doc said Planned, code has a working `SavingsView`) | `claudemd/screens/automated-savings-rules.md` |
+| Goals (savings buckets) | Shipped (corrected 2026-07-24 — doc said Planned, code has a working `GoalsView`) | `claudemd/screens/goals.md` |
 | Investing Education (Roth IRA) | Planned | `claudemd/screens/investing-education.md` |
 | Budgeting Mode Toggle | Planned | `claudemd/screens/budgeting-mode-toggle.md` |
 | Notifications | Planned | `claudemd/screens/notifications.md` |

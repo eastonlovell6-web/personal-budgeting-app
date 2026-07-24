@@ -1,7 +1,19 @@
-// Categorical chart palette — the 8 dark-mode hues from the dataviz reference,
-// validated against our surface (#191c22): all checks pass. Assigned in fixed
-// order by a stable per-entity key (never by rank), overflow folds to "Other".
+// Money Moves fixed concept colors — 1:1 mapping, never reassigned or mixed
+// across concepts. See claudemd/design-system.md.
+export const CONCEPT = {
+  income: "#2fa968",
+  spending: "#eb4b4b",
+  cashflow: "#17abda",
+  savings: "#ffc53d",
+  goals: "#cc3dc4",
+} as const;
 
+// Categorical chart palette — for multi-series breakdowns (e.g. spending by
+// sub-category: Housing, Food, Transport) that aren't one of the 5 fixed
+// concepts above. Deliberately independent of CONCEPT; the design system
+// doesn't specify sub-category chart colors, so this wasn't touched in the
+// 2026-07-24 color pass. Assigned in fixed order by a stable per-entity key
+// (never by rank), overflow folds to "Other".
 export const CATEGORICAL = [
   "#3987e5", // blue
   "#008300", // green
@@ -16,13 +28,13 @@ export const CATEGORICAL = [
 export const OTHER_COLOR = "#6b7280"; // muted gray for the folded tail
 
 export const CHART = {
-  surface: "#191c22",
-  grid: "#2c2c2a",
-  axis: "#383835",
-  textPrimary: "#e6e8eb",
-  textMuted: "#8b909a",
-  positive: "#0ca30c",
-  negative: "#d03b3b",
+  surface: "#211f1b",
+  grid: "#2b2a26",
+  axis: "#3a3833",
+  textPrimary: "#f6f4ef",
+  textMuted: "#a9a69e",
+  positive: CONCEPT.income,
+  negative: CONCEPT.spending,
 } as const;
 
 /**

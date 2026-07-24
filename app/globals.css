@@ -1,16 +1,31 @@
 @import "tailwindcss";
 
-/* ---- Monarch-style dark theme tokens ---- */
+/* ---- Money Moves design system tokens ---- */
+/* See claudemd/design-system.md — this is the source of truth these
+   variables are meant to track. Dark mode only for now (app-wide
+   constraint); light-mode values are documented there but unused here. */
 :root {
-  --background: #0f1115;
-  --surface: #191c22;
-  --surface-2: #22262e;
-  --border: #2a2f38;
-  --foreground: #e6e8eb;
-  --muted: #8b909a;
-  --accent: #f2683c;   /* orange */
-  --positive: #3fb98a; /* green  */
-  --negative: #e0574a; /* red    */
+  --background: #171614;
+  --surface: #211f1b;
+  --surface-2: #1f1e1b;
+  --border: rgba(255, 255, 255, 0.08);
+  --foreground: #f6f4ef;   /* Paper White */
+  --muted: #a9a69e;        /* text secondary, dark mode */
+  --tertiary: #8a8779;
+  --control: #2b2a26;      /* secondary button / progress track / ring remainder */
+  --accent: #ff6a33;       /* brand orange — universal, never per-screen */
+
+  /* Fixed 1:1 concept colors — never reassigned or mixed across concepts */
+  --income: #2fa968;
+  --spending: #eb4b4b;
+  --cashflow: #17abda;
+  --savings: #ffc53d;
+  --goals: #cc3dc4;
+
+  /* positive/negative are the income/spending colors under their old names,
+     kept for the sign-based deltas that already used them */
+  --positive: var(--income);
+  --negative: var(--spending);
 }
 
 @theme inline {
@@ -20,11 +35,18 @@
   --color-border: var(--border);
   --color-foreground: var(--foreground);
   --color-muted: var(--muted);
+  --color-tertiary: var(--tertiary);
+  --color-control: var(--control);
   --color-accent: var(--accent);
   --color-positive: var(--positive);
   --color-negative: var(--negative);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-income: var(--income);
+  --color-spending: var(--spending);
+  --color-cashflow: var(--cashflow);
+  --color-savings: var(--savings);
+  --color-goals: var(--goals);
+  --font-sans: var(--font-inter);
+  --font-heading: var(--font-sora);
 }
 
 html,

@@ -9,13 +9,16 @@ import {
 } from "d3-sankey";
 import type { SankeyData } from "@/lib/types";
 import { GROUPS } from "@/lib/categories";
-import { CATEGORICAL, CHART } from "@/lib/palette";
+import { CATEGORICAL, CHART, CONCEPT } from "@/lib/palette";
 import { money0 } from "@/lib/format";
 
 type N = SankeyNodeMinimal<{ name: string }, object> & { name: string };
 type L = SankeyLinkMinimal<{ name: string }, object>;
 
-const GREEN = "#199e70";
+// Money Moves: income/savings nodes use the fixed Income Green concept
+// color, per the design system's "cash-flow diagram uses the category
+// colors" rule.
+const INCOME_GREEN = CONCEPT.income;
 
 // Color a node by role: income hub/sources/savings are green; expense groups
 // take a stable categorical hue; leaves inherit their parent group's hue.
@@ -24,7 +27,7 @@ function nodeColors(nodes: { name: string }[], links: SankeyData["links"]): stri
   const expenseGroups = GROUPS.filter((g) => g !== "Income");
 
   nodes.forEach((n, i) => {
-    if (n.name === "Income" || n.name === "Savings") colors[i] = GREEN;
+    if (n.name === "Income" || n.name === "Savings") colors[i] = INCOME_GREEN;
     const gi = expenseGroups.indexOf(n.name as (typeof expenseGroups)[number]);
     if (gi >= 0) colors[i] = CATEGORICAL[gi % CATEGORICAL.length];
   });
@@ -32,7 +35,7 @@ function nodeColors(nodes: { name: string }[], links: SankeyData["links"]): stri
   // Sources feeding the Income hub are income → green.
   const hubIndex = nodes.findIndex((n) => n.name === "Income");
   for (const l of links) {
-    if (l.target === hubIndex && !colors[l.source]) colors[l.source] = GREEN;
+    if (l.target === hubIndex && !colors[l.source]) colors[l.source] = INCOME_GREEN;
   }
   // Leaves inherit their parent group's color.
   for (const l of links) {

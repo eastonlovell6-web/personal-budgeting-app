@@ -1,20 +1,24 @@
 import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Sora, Inter } from "next/font/google";
 import "./globals.css";
 import { RegisterSW } from "@/components/RegisterSW";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+// Money Moves design system: Sora for headings/stat figures, Inter for
+// body/UI. See claudemd/design-system.md.
+const sora = Sora({
+  variable: "--font-sora",
+  weight: ["600", "700", "800"],
   subsets: ["latin"],
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const inter = Inter({
+  variable: "--font-inter",
+  weight: ["400", "500", "600"],
   subsets: ["latin"],
 });
 
 export const metadata: Metadata = {
-  title: "Budget",
+  title: "Money Moves",
   description: "Personal budgeting",
   manifest: "/manifest.webmanifest",
   icons: {
@@ -24,12 +28,12 @@ export const metadata: Metadata = {
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
-    title: "Budget",
+    title: "Money Moves",
   },
 };
 
 export const viewport: Viewport = {
-  themeColor: "#0f1115",
+  themeColor: "#171614",
   viewportFit: "cover",
   width: "device-width",
   initialScale: 1,
@@ -44,7 +48,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${sora.variable} ${inter.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-background text-foreground">
         <RegisterSW />

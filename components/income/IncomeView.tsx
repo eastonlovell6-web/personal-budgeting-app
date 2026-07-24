@@ -51,7 +51,12 @@ export function IncomeView({
         <div className="mb-3 text-xs text-muted">
           {rangeLabel(range.start, range.end)}
         </div>
-        <SummaryRow label="Total income" value={money(data.summary.total)} strong />
+        <SummaryRow
+          label="Total income"
+          value={money(data.summary.total)}
+          strong
+          colorClassName="text-income"
+        />
         <SummaryRow label="Total transactions" value={String(data.summary.count)} />
         <SummaryRow label="Largest transaction" value={money(data.summary.largest)} />
       </Card>
@@ -89,17 +94,21 @@ function SummaryRow({
   label,
   value,
   strong = false,
+  colorClassName,
 }: {
   label: string;
   value: string;
   strong?: boolean;
+  colorClassName?: string;
 }) {
   return (
     <div className="flex items-center justify-between border-t border-border py-2.5 first:border-t-0">
       <span className="text-sm text-muted">{label}</span>
       <span
         className={`tabular-nums ${
-          strong ? "text-base font-semibold text-foreground" : "text-sm text-foreground"
+          strong
+            ? `font-heading text-base font-semibold ${colorClassName ?? "text-foreground"}`
+            : `text-sm ${colorClassName ?? "text-foreground"}`
         }`}
       >
         {value}

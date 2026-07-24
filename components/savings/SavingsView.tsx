@@ -66,7 +66,7 @@ export function SavingsView({
       {data.rules.some((r) => r.active) && (
         <Card>
           <div className="text-xs text-muted">Simulated this period</div>
-          <div className="mt-1 text-2xl font-semibold tabular-nums">
+          <div className="mt-1 font-heading text-2xl font-semibold tabular-nums text-savings">
             {money(data.combinedTotal)}
           </div>
           <div className="mt-3 flex flex-col gap-2">

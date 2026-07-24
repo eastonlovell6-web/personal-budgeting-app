@@ -97,9 +97,9 @@ export function GoalsView({
               />
               <span>/ {money0(g.targetAmount)}</span>
             </div>
-            <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-surface-2">
+            <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-control">
               <div
-                className="h-full rounded-full bg-accent"
+                className="h-full rounded-full bg-goals"
                 style={{ width: `${pct}%` }}
               />
             </div>

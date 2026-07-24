@@ -9,24 +9,29 @@ priority.
 
 ## Status
 
-Planned — not started in code. Source: `Projects/budgeting-app.md`
-("Goal-Based Savings Buckets" section).
+Shipped (status corrected 2026-07-24 — this doc previously said "Planned,"
+but `GoalsView` and the `/api/goals` routes already exist and work). Progress
+bars currently use the generic `bg-accent` (orange) token; per
+`claudemd/design-system.md` they should be Goals Magenta (`#CC3DC4`) — fixed
+in the 2026-07-24 color pass, see that file's "Applied so far" list.
 
 ## Key Files
 
-None yet.
+`components/goals/GoalsView.tsx`, `app/api/goals/route.ts`,
+`app/api/goals/[id]/route.ts`, `prisma/schema.prisma` (`Goal` model).
 
 ## Layout / UI Spec
 
-Sketch only: a goals list/grid, each with name, target amount, current
-progress (bar or ring), and a way to add/edit a goal. Reuse
-`components/ui/Card.tsx` and the `CATEGORICAL` palette
-(`lib/palette.ts:5`) rather than introducing new visual primitives.
+A goals list, each with name, target amount, current progress (horizontal
+bar, editable inline), delete action, and an add-goal form below the list.
+Uses `components/ui/Card.tsx`. Not yet using a ring/donut per the design
+system's "Savings/goal ring" component spec — still a plain progress bar.
 
 ## Data Contract
 
-Not yet defined. Needs a new Prisma model (`Goal`: name, targetAmount,
-currentAmount or a derived contribution log, createdAt).
+`Goal` Prisma model: `name`, `targetAmount`, `currentAmount`, `createdAt`.
+CRUD via `/api/goals` (list/create) and `/api/goals/[id]` (patch current
+amount, delete).
 
 ## Fintech UX Principles Applied
 

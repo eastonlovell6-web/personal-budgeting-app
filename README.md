@@ -1,4 +1,4 @@
-# Budget
+# Money Moves
 
 A personal, single-user budgeting app modeled on Monarch Money. Connects to your
 bank via **Plaid**, syncs transactions into a local database, and shows three

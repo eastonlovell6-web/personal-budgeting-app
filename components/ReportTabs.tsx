@@ -2,12 +2,14 @@
 
 export type Tab = "income" | "spending" | "cashflow" | "savings" | "goals";
 
-const TABS: { id: Tab; label: string }[] = [
-  { id: "income", label: "Income" },
-  { id: "spending", label: "Spending" },
-  { id: "cashflow", label: "Cash Flow" },
-  { id: "savings", label: "Savings" },
-  { id: "goals", label: "Goals" },
+// Money Moves: the active tab label reads in that tab's fixed concept
+// color; inactive tabs stay neutral so the color reads as a signal.
+const TABS: { id: Tab; label: string; activeClass: string }[] = [
+  { id: "income", label: "Income", activeClass: "text-income" },
+  { id: "spending", label: "Spending", activeClass: "text-spending" },
+  { id: "cashflow", label: "Cash Flow", activeClass: "text-cashflow" },
+  { id: "savings", label: "Savings", activeClass: "text-savings" },
+  { id: "goals", label: "Goals", activeClass: "text-goals" },
 ];
 
 export function ReportTabs({
@@ -29,7 +31,7 @@ export function ReportTabs({
             onClick={() => onChange(t.id)}
             className={`flex-1 rounded-full px-3 py-2 text-sm font-medium transition-colors ${
               active
-                ? "bg-surface-2 text-foreground shadow-sm"
+                ? `bg-surface-2 shadow-sm ${t.activeClass}`
                 : "text-muted hover:text-foreground"
             }`}
           >

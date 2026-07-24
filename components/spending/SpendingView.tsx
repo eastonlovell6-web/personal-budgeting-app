@@ -107,7 +107,7 @@ export function SpendingView({ data, range }: { data: SpendingReport; range: Ran
             </PieChart>
           </ResponsiveContainer>
           <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
-            <div className="text-2xl font-semibold tabular-nums">
+            <div className="font-heading text-2xl font-semibold tabular-nums text-spending">
               {money(data.total)}
             </div>
             <div className="text-xs text-muted">Total</div>
