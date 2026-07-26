@@ -2,9 +2,10 @@
 
 /* ---- Money Moves design system tokens ---- */
 /* See claudemd/design-system.md — this is the source of truth these
-   variables are meant to track. Dark mode only for now (app-wide
-   constraint); light-mode values are documented there but unused here. */
-:root {
+   variables are meant to track. Dark is the default theme; light mode
+   values below match the hex table in that doc. `data-theme` is set on
+   <html> by the blocking script in app/layout.tsx before first paint. */
+[data-theme="dark"] {
   --background: #171614;
   --surface: #211f1b;
   --surface-2: #1f1e1b;
@@ -14,8 +15,11 @@
   --tertiary: #8a8779;
   --control: #2b2a26;      /* secondary button / progress track / ring remainder */
   --accent: #ff6a33;       /* brand orange — universal, never per-screen */
+  --ink: #1c1b18;          /* Ink Black — dark text on the orange accent fill */
+  --chart-hover: rgba(255, 255, 255, 0.04);
 
-  /* Fixed 1:1 concept colors — never reassigned or mixed across concepts */
+  /* Fixed 1:1 concept colors — never reassigned or mixed across concepts,
+     identical in both themes */
   --income: #2fa968;
   --spending: #eb4b4b;
   --cashflow: #17abda;
@@ -24,6 +28,29 @@
 
   /* positive/negative are the income/spending colors under their old names,
      kept for the sign-based deltas that already used them */
+  --positive: var(--income);
+  --negative: var(--spending);
+}
+
+[data-theme="light"] {
+  --background: #edebe5;
+  --surface: #ffffff;
+  --surface-2: #ffffff;
+  --border: rgba(0, 0, 0, 0.08);
+  --foreground: #1c1b18;   /* Ink Black */
+  --muted: #5b584f;        /* text secondary, light mode */
+  --tertiary: #8a8779;
+  --control: #e5e2db;
+  --accent: #ff6a33;
+  --ink: #1c1b18;
+  --chart-hover: rgba(0, 0, 0, 0.04);
+
+  --income: #2fa968;
+  --spending: #eb4b4b;
+  --cashflow: #17abda;
+  --savings: #ffc53d;
+  --goals: #cc3dc4;
+
   --positive: var(--income);
   --negative: var(--spending);
 }
@@ -38,6 +65,7 @@
   --color-tertiary: var(--tertiary);
   --color-control: var(--control);
   --color-accent: var(--accent);
+  --color-ink: var(--ink);
   --color-positive: var(--positive);
   --color-negative: var(--negative);
   --color-income: var(--income);
@@ -45,8 +73,40 @@
   --color-cashflow: var(--cashflow);
   --color-savings: var(--savings);
   --color-goals: var(--goals);
+  --color-chart-hover: var(--chart-hover);
   --font-sans: var(--font-inter);
   --font-heading: var(--font-sora);
+
+  /* Radius scale — see claudemd/design-system.md */
+  --radius-control: 10px;
+  --radius-card: 16px;
+  --radius-large: 24px;
+  --radius-pill: 999px;
+}
+
+/* Type scale — see claudemd/design-system.md. Only the styles that read as
+   headings/labels get named classes; body copy uses Tailwind's text-sm/xs
+   directly since it already tracks the spec closely enough. */
+@layer components {
+  .text-screen-title {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 24px;
+    line-height: 1.25;
+  }
+  .text-section-label {
+    font-family: var(--font-sans);
+    font-weight: 600;
+    font-size: 17px;
+    line-height: 1.3;
+  }
+  .text-eyebrow {
+    font-family: var(--font-sans);
+    font-weight: 600;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
 }
 
 html,
