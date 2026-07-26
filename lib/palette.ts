@@ -27,12 +27,16 @@ export const CATEGORICAL = [
 
 export const OTHER_COLOR = "#6b7280"; // muted gray for the folded tail
 
+// Theme-aware chart colors — these reference the same CSS custom
+// properties app/globals.css themes via [data-theme], so Recharts styling
+// (tooltip background, axis text, grid lines) follows light/dark
+// automatically instead of needing its own hex table.
 export const CHART = {
-  surface: "#211f1b",
-  grid: "#2b2a26",
-  axis: "#3a3833",
-  textPrimary: "#f6f4ef",
-  textMuted: "#a9a69e",
+  surface: "var(--surface)",
+  grid: "var(--border)",
+  axis: "var(--muted)",
+  textPrimary: "var(--foreground)",
+  textMuted: "var(--muted)",
   positive: CONCEPT.income,
   negative: CONCEPT.spending,
 } as const;

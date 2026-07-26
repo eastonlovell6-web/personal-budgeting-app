@@ -18,7 +18,7 @@ type Row = { month: string } & Record<string, number | string>;
 function ChartTooltip({ active, payload, label }: any) {
   if (!active || !payload?.length) return null;
   return (
-    <div className="rounded-lg border border-border bg-surface-2 px-3 py-2 text-xs shadow-lg">
+    <div className="rounded-control border border-border bg-surface-2 px-3 py-2 text-xs shadow-lg">
       <div className="mb-1 font-medium text-foreground">{label}</div>
       {payload
         .slice()
@@ -65,7 +65,7 @@ export function IncomeBySourceChart({ data }: { data: IncomeReport }) {
             />
             <Tooltip
               content={<ChartTooltip />}
-              cursor={{ fill: "rgba(255,255,255,0.04)" }}
+              cursor={{ fill: "var(--chart-hover)" }}
             />
             {data.sources.map((source, i) => (
               <Bar

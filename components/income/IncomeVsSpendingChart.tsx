@@ -49,7 +49,7 @@ function ChartTooltip({ active, payload, label }: any) {
   const expenses = payload.find((p: any) => p.dataKey === "expenses")?.value ?? 0;
   const net = payload.find((p: any) => p.dataKey === "net")?.value ?? 0;
   return (
-    <div className="rounded-lg border border-border bg-surface-2 px-3 py-2 text-xs shadow-lg">
+    <div className="rounded-control border border-border bg-surface-2 px-3 py-2 text-xs shadow-lg">
       <div className="mb-1 font-medium text-foreground">{label}</div>
       <TooltipRow color={CHART.positive} label="Income" value={income} />
       <TooltipRow color={CHART.negative} label="Spending" value={Math.abs(expenses)} />
@@ -82,7 +82,11 @@ export function IncomeVsSpendingChart({ data }: { data: IncomeReport }) {
     <>
       <div className="h-56 w-full">
         <ResponsiveContainer width="100%" height="100%">
-          <ComposedChart data={rows} margin={{ top: 8, right: 4, left: -8, bottom: 0 }}>
+          <ComposedChart
+            data={rows}
+            stackOffset="sign"
+            margin={{ top: 8, right: 4, left: -8, bottom: 0 }}
+          >
             <CartesianGrid vertical={false} stroke={CHART.grid} />
             <XAxis
               dataKey="month"
@@ -99,17 +103,19 @@ export function IncomeVsSpendingChart({ data }: { data: IncomeReport }) {
             />
             <Tooltip
               content={<ChartTooltip />}
-              cursor={{ fill: "rgba(255,255,255,0.04)" }}
+              cursor={{ fill: "var(--chart-hover)" }}
             />
             <ReferenceLine y={0} stroke={CHART.axis} />
             <Bar
               dataKey="income"
+              stackId="netFlow"
               fill={CHART.positive}
               isAnimationActive={false}
               radius={[4, 4, 0, 0]}
             />
             <Bar
               dataKey="expenses"
+              stackId="netFlow"
               fill={CHART.negative}
               isAnimationActive={false}
               radius={[0, 0, 4, 4]}
