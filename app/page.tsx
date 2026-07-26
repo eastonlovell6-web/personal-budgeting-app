@@ -16,6 +16,7 @@ import { CashflowView } from "@/components/cashflow/CashflowView";
 import { SavingsView } from "@/components/savings/SavingsView";
 import { GoalsView } from "@/components/goals/GoalsView";
 import { CashPlacementNudge } from "@/components/nudge/CashPlacementNudge";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import {
   ConnectEmptyState,
   AddAccountButton,
@@ -110,6 +111,7 @@ function Dashboard() {
       <header className="flex items-center justify-between gap-2 pt-2">
         <h1 className="text-screen-title">Reports</h1>
         <div className="flex items-center gap-2">
+          <ThemeToggle />
           {!empty && <AddAccountButton onLinked={load} />}
           <DateRangePicker value={range} onChange={setRange} />
         </div>
