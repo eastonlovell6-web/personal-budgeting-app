@@ -36,10 +36,10 @@ Neutrals:
 | Text tertiary | `#8A8779` | — |
 | Control fill | `#2B2A26` | Secondary button fill, progress-bar track, donut-ring remainder |
 
-**Dark mode is primary; light mode is supported** with the same accent/category colors,
-inverted neutrals. This app is currently dark-only per its existing `CLAUDE.md` constraint —
-light mode is documented here for completeness but not yet implemented; don't add it without
-a separate decision to do so.
+**Dark mode is the default; light mode is supported** with the same accent/category colors,
+inverted neutrals. Implemented via `[data-theme]`-keyed CSS custom properties in
+`app/globals.css` and a manual toggle in the dashboard header — see
+`docs/superpowers/specs/2026-07-26-light-mode-design.md` for the design.
 
 Category colors — **fixed 1:1 mapping, never reassigned or mixed across concepts**:
 
@@ -128,7 +128,6 @@ Applied in the 2026-07-26 type-scale/radius pass:
 
 **Not yet done** — real follow-up work, not silently skipped:
 - Status chips (no budget-vs-actual feature exists yet to attach them to)
-- Light mode
 - `lib/palette.ts`'s `CATEGORICAL` 8-hue array (used for spending sub-category breakdowns,
   e.g. Housing/Food/Transport slices) is a **separate, independent palette** from the 5 fixed
   concept colors above — it was deliberately left alone, since the design system doesn't

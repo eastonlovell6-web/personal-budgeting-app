@@ -24,10 +24,15 @@ screen as a PWA — no App Store.
   and never returned to the client.
 - **Money formatting**: `$1,234.56` via `lib/format.ts` (`money`, `money0`,
   `moneyCompact`) — never format currency inline.
-- **Dark theme only** — tokens in `app/globals.css`; don't hardcode colors,
-  use the CSS variables / `lib/palette.ts`. Follow `claudemd/design-system.md`
-  (the "Money Moves" system) for anything color/type/component-related — it's
-  the source of truth this repo's tokens are meant to match.
+- **Dark and light theme, manual toggle** — tokens in `app/globals.css`,
+  keyed by `[data-theme="dark"|"light"]`; don't hardcode colors, use the CSS
+  variables / `lib/palette.ts`. Theme state lives in `components/ThemeProvider.tsx`
+  (`useTheme()`); the toggle is in the dashboard header
+  (`components/ThemeToggle.tsx`). No system-preference auto-detection —
+  the user's choice is explicit and persisted (`localStorage`). Follow
+  `claudemd/design-system.md` (the "Money Moves" system) for anything
+  color/type/component-related — it's the source of truth this repo's
+  tokens are meant to match.
 - **Don't hardcode financial figures that go stale** (APY rates, Roth IRA
   limits) once those features exist — pull from a source that can be
   updated. See `claudemd/best-practices.md`.
