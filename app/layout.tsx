@@ -63,6 +63,7 @@ export default function RootLayout({
     <html
       lang="en"
       data-theme="dark"
+      suppressHydrationWarning
       className={`${sora.variable} ${inter.variable} h-full antialiased`}
     >
       <head>

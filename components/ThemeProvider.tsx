@@ -30,7 +30,9 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     setTheme((prev) => {
       const next = otherTheme(prev);
       document.documentElement.setAttribute("data-theme", next);
-      localStorage.setItem(THEME_STORAGE_KEY, next);
+      try {
+        localStorage.setItem(THEME_STORAGE_KEY, next);
+      } catch (e) {}
       return next;
     });
   }, []);
