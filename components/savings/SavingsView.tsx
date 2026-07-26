@@ -65,7 +65,7 @@ export function SavingsView({
     <div className="flex flex-col gap-4">
       {data.rules.some((r) => r.active) && (
         <Card>
-          <div className="text-xs text-muted">Simulated this period</div>
+          <div className="text-eyebrow text-muted">Simulated this period</div>
           <div className="mt-1 font-heading text-2xl font-semibold tabular-nums text-savings">
             {money(data.combinedTotal)}
           </div>
@@ -98,7 +98,7 @@ export function SavingsView({
               <button
                 onClick={() => toggleActive(r.id, !r.active)}
                 className={`rounded-full px-3 py-1 text-xs font-medium ${
-                  r.active ? "bg-accent text-white" : "bg-surface-2 text-muted"
+                  r.active ? "bg-accent text-ink" : "bg-surface-2 text-muted"
                 }`}
               >
                 {r.active ? "Active" : "Paused"}
@@ -143,7 +143,7 @@ export function SavingsView({
                 value={percent}
                 onChange={(e) => setPercent(e.target.value)}
                 placeholder="10"
-                className="w-16 rounded-lg border border-border bg-background px-2 py-1 text-sm tabular-nums"
+                className="w-16 rounded-control border border-border bg-background px-2 py-1 text-sm tabular-nums"
               />
               <span className="text-xs text-muted">% of every deposit</span>
             </div>
@@ -153,7 +153,7 @@ export function SavingsView({
               <select
                 value={increment}
                 onChange={(e) => setIncrement(Number(e.target.value) as 1 | 5)}
-                className="rounded-lg border border-border bg-background px-2 py-1 text-sm"
+                className="rounded-control border border-border bg-background px-2 py-1 text-sm"
               >
                 <option value={1}>$1</option>
                 <option value={5}>$5</option>
@@ -162,7 +162,7 @@ export function SavingsView({
           )}
           <button
             onClick={addRule}
-            className="self-start rounded-full bg-accent px-3 py-1.5 text-xs font-medium text-white"
+            className="self-start rounded-full bg-accent px-3 py-1.5 text-xs font-medium text-ink"
           >
             Add rule
           </button>

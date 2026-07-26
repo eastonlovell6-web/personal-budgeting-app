@@ -102,12 +102,12 @@ export function CashPlacementNudge() {
               value={referenceInput}
               onChange={(e) => setReferenceInput(e.target.value)}
               placeholder="4.10"
-              className="w-20 rounded-lg border border-border bg-background px-2 py-1 text-sm tabular-nums"
+              className="w-20 rounded-control border border-border bg-background px-2 py-1 text-sm tabular-nums"
             />
             <span className="text-xs text-muted">%</span>
             <button
               onClick={saveReferenceApy}
-              className="rounded-full bg-accent px-3 py-1.5 text-xs font-medium text-white"
+              className="rounded-full bg-accent px-3 py-1.5 text-xs font-medium text-ink"
             >
               Save
             </button>
@@ -134,11 +134,11 @@ export function CashPlacementNudge() {
                   }))
                 }
                 placeholder="0.40"
-                className="w-16 rounded-lg border border-border bg-background px-2 py-1 text-sm tabular-nums"
+                className="w-16 rounded-control border border-border bg-background px-2 py-1 text-sm tabular-nums"
               />
               <button
                 onClick={() => saveAccountApy(a.accountId)}
-                className="rounded-full bg-accent px-3 py-1.5 text-xs font-medium text-white"
+                className="rounded-full bg-accent px-3 py-1.5 text-xs font-medium text-ink"
               >
                 Save
               </button>

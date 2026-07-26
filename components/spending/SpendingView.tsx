@@ -12,13 +12,13 @@ import { money, dayShort, isoDate } from "@/lib/format";
 import { Card } from "@/components/ui/Card";
 import type { Range } from "@/components/DateRangePicker";
 
-const TOP_N = 8;
+const TOP_N = 6;
 
 function DonutTooltip({ active, payload }: any) {
   if (!active || !payload?.length) return null;
   const p = payload[0];
   return (
-    <div className="rounded-lg border border-border bg-surface-2 px-3 py-2 text-xs shadow-lg">
+    <div className="rounded-control border border-border bg-surface-2 px-3 py-2 text-xs shadow-lg">
       <span className="text-foreground">{p.name}</span>
       <span className="ml-2 tabular-nums text-muted">{money(p.value)}</span>
     </div>
@@ -92,9 +92,9 @@ export function SpendingView({ data, range }: { data: SpendingReport; range: Ran
                 nameKey="name"
                 innerRadius="68%"
                 outerRadius="100%"
-                paddingAngle={2}
+                paddingAngle={0}
                 stroke={"var(--surface)"}
-                strokeWidth={2}
+                strokeWidth={1}
                 startAngle={90}
                 endAngle={-270}
                 isAnimationActive={false}
@@ -107,10 +107,10 @@ export function SpendingView({ data, range }: { data: SpendingReport; range: Ran
             </PieChart>
           </ResponsiveContainer>
           <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
-            <div className="font-heading text-2xl font-semibold tabular-nums text-spending">
+            <div className="font-heading text-2xl font-semibold tabular-nums text-foreground">
               {money(data.total)}
             </div>
-            <div className="text-xs text-muted">Total</div>
+            <div className="text-eyebrow text-muted">Total</div>
           </div>
         </div>
       </Card>

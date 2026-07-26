@@ -11,3 +11,4 @@ prisma/dev.db*
 
 .worktrees/
 .claude/worktrees/
+.superpowers/

@@ -108,15 +108,31 @@ Applied in the 2026-07-24 color pass:
 - Sora + Inter fonts wired up via `next/font/google`; applied to the clearest "big stat
   figure" elements (donut center total, StatRow figures, Income/Savings hero totals)
 
+Applied in the 2026-07-26 type-scale/radius pass:
+- `text-screen-title` / `text-section-label` / `text-eyebrow` utility classes added
+  (`app/globals.css`) for the Sora 700/24px, Inter 600/17px, and Inter 600/12px-uppercase
+  styles; applied to the "Reports" header, each card's section label ("Income by month",
+  "Summary", "Cash flow"), and small stat captions (StatRow labels, donut "Total",
+  SavingsView "Simulated this period")
+- Radius tokens (`rounded-control` 10px / `rounded-card` 16px / `rounded-pill` 999px) added
+  and swapped in for the ad-hoc `rounded-lg`/`rounded-xl`/`rounded-2xl` utilities across
+  `Card`, `StatRow`, form inputs (Goals/Savings/CashPlacementNudge/login), the
+  `DateRangePicker` dropdown, and chart tooltips
+- Primary buttons (`bg-accent`) switched from `text-white` to a new `text-ink` token
+  (`--ink: #1c1b18`), matching the "orange fill, dark text" primary-button spec; this
+  covers every accent CTA (Unlock, Connect a bank, Add goal, Add rule, Active/Paused toggle,
+  both nudge Save buttons)
+- Secondary-style chips (+ Account, the date-range trigger, "Back to home") switched from a
+  bordered `bg-surface` fill to solid `bg-control`/`text-foreground`, matching the
+  "Secondary button: pill, dark-gray fill, light text" spec
+
 **Not yet done** — real follow-up work, not silently skipped:
-- Full type-scale pass across screen titles, section labels, and eyebrow tags (still on the
-  default Inter body weight/size in most places, not the 24px Sora screen-title style)
 - Status chips (no budget-vs-actual feature exists yet to attach them to)
-- Radius token system (`10/16/24/pill`) — screens still use ad-hoc Tailwind radius utilities
-  (`rounded-lg`, `rounded-2xl`, etc.) that roughly but not exactly match this scale
 - Light mode
 - `lib/palette.ts`'s `CATEGORICAL` 8-hue array (used for spending sub-category breakdowns,
   e.g. Housing/Food/Transport slices) is a **separate, independent palette** from the 5 fixed
   concept colors above — it was deliberately left alone, since the design system doesn't
   specify sub-category chart colors. Worth a look later to make sure none of its 8 hues reads
   as visually confusable with the 5 fixed concept colors (e.g. its green and Income Green).
+- Ghost button style (pill, orange outline, transparent fill) has no user yet — SpendingView's
+  "Show more" link was deliberately left as plain text rather than forced into that shape

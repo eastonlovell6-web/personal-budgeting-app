@@ -23,7 +23,7 @@ export function IncomeView({
     <div className="flex flex-col gap-4">
       <Card>
         <div className="mb-3 flex items-center justify-between gap-2">
-          <div className="text-sm text-muted">
+          <div className="text-section-label text-foreground">
             {view === "source" ? "Income by month" : "Income vs. spending"}
           </div>
           <div className="flex rounded-full bg-surface p-1" role="tablist">
@@ -47,7 +47,7 @@ export function IncomeView({
       </Card>
 
       <Card>
-        <div className="mb-3 text-sm text-muted">Summary</div>
+        <div className="mb-3 text-section-label text-foreground">Summary</div>
         <div className="mb-3 text-xs text-muted">
           {rangeLabel(range.start, range.end)}
         </div>

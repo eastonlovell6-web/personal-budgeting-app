@@ -10,7 +10,7 @@ export function CashflowView({ data }: { data: CashflowReport }) {
     <div className="flex flex-col gap-4">
       <StatRow stats={data.stats} />
       <Card>
-        <div className="mb-2 text-sm text-muted">Cash flow</div>
+        <div className="mb-2 text-section-label text-foreground">Cash flow</div>
         <SankeyChart data={data.sankey} />
       </Card>
     </div>

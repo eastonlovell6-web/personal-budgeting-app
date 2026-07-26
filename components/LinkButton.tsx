@@ -88,7 +88,7 @@ export function ConnectEmptyState({ onLinked }: { onLinked: () => void }) {
       <button
         onClick={start}
         disabled={status === "loading" || status === "syncing"}
-        className="rounded-full bg-accent px-5 py-2.5 text-sm font-medium text-white disabled:opacity-50"
+        className="rounded-full bg-accent px-5 py-2.5 text-sm font-medium text-ink disabled:opacity-50"
       >
         {status === "loading"
           ? "Opening…"
@@ -113,7 +113,7 @@ export function AddAccountButton({ onLinked }: { onLinked: () => void }) {
       <button
         onClick={start}
         disabled={status === "loading" || status === "syncing"}
-        className="rounded-full border border-border bg-surface px-3 py-1.5 text-sm text-muted disabled:opacity-50"
+        className="rounded-full bg-control px-3 py-1.5 text-sm text-foreground disabled:opacity-50"
         aria-label="Add account"
       >
         {status === "syncing" ? "Syncing…" : "＋ Account"}
@@ -187,7 +187,7 @@ export function PlaidOAuthResume() {
         <p className="max-w-xs text-sm text-negative">{errorMessage}</p>
         <button
           onClick={() => router.replace("/")}
-          className="rounded-full border border-border bg-surface px-4 py-2 text-sm text-muted"
+          className="rounded-full bg-control px-4 py-2 text-sm text-foreground"
         >
           Back to home
         </button>

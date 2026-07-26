@@ -93,7 +93,7 @@ export function GoalsView({
                 onKeyDown={(e) => {
                   if (e.key === "Enter") e.currentTarget.blur();
                 }}
-                className="w-20 rounded-lg border border-border bg-background px-2 py-0.5 text-right tabular-nums text-foreground"
+                className="w-20 rounded-control border border-border bg-background px-2 py-0.5 text-right tabular-nums text-foreground"
               />
               <span>/ {money0(g.targetAmount)}</span>
             </div>
@@ -114,7 +114,7 @@ export function GoalsView({
             value={name}
             onChange={(e) => setName(e.target.value)}
             placeholder="Goal name"
-            className="rounded-lg border border-border bg-background px-2 py-1 text-sm"
+            className="rounded-control border border-border bg-background px-2 py-1 text-sm"
           />
           <div className="flex items-center gap-2">
             <input
@@ -123,13 +123,13 @@ export function GoalsView({
               value={targetAmount}
               onChange={(e) => setTargetAmount(e.target.value)}
               placeholder="10000"
-              className="w-24 rounded-lg border border-border bg-background px-2 py-1 text-sm tabular-nums"
+              className="w-24 rounded-control border border-border bg-background px-2 py-1 text-sm tabular-nums"
             />
             <span className="text-xs text-muted">target amount</span>
           </div>
           <button
             onClick={addGoal}
-            className="self-start rounded-full bg-accent px-3 py-1.5 text-xs font-medium text-white"
+            className="self-start rounded-full bg-accent px-3 py-1.5 text-xs font-medium text-ink"
           >
             Add goal
           </button>

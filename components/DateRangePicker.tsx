@@ -45,7 +45,7 @@ export function DateRangePicker({
     <div className="relative">
       <button
         onClick={() => setOpen((o) => !o)}
-        className="flex items-center gap-1.5 rounded-full border border-border bg-surface px-3 py-1.5 text-sm text-muted"
+        className="flex items-center gap-1.5 rounded-full bg-control px-3 py-1.5 text-sm text-foreground"
       >
         {value.label}
         <span className="text-xs">▾</span>
@@ -53,7 +53,7 @@ export function DateRangePicker({
       {open && (
         <>
           <div className="fixed inset-0 z-10" onClick={() => setOpen(false)} />
-          <div className="absolute right-0 z-20 mt-2 w-44 overflow-hidden rounded-xl border border-border bg-surface-2 shadow-lg">
+          <div className="absolute right-0 z-20 mt-2 w-44 overflow-hidden rounded-card border border-border bg-surface-2 shadow-lg">
             {options.map((opt) => {
               const active = opt.label === value.label;
               return (

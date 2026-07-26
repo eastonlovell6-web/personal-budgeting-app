@@ -14,8 +14,8 @@ export function StatRow({ stats }: { stats: CashflowStats }) {
   return (
     <div className="grid grid-cols-2 gap-2">
       {items.map((it) => (
-        <div key={it.label} className="rounded-xl border border-border bg-surface p-3">
-          <div className="text-xs text-muted">{it.label}</div>
+        <div key={it.label} className="rounded-card border border-border bg-surface p-3">
+          <div className="text-eyebrow text-muted">{it.label}</div>
           <div
             className="mt-1 font-heading text-lg font-semibold tabular-nums"
             style={{ color: it.color }}

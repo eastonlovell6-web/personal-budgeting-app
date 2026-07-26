@@ -1,13 +1,25 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
   const router = useRouter();
+  const inputRef = useRef<HTMLInputElement>(null);
   const [passcode, setPasscode] = useState("");
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  // Focus imperatively post-mount (not via the `autoFocus` attribute) so the
+  // keyboard can't pop — and catch keystrokes — before React has hydrated
+  // and attached the onChange handler. On a slow mobile load, a statically
+  // autofocused input opens the keyboard while still server-rendered HTML;
+  // any digits typed in that window land in the raw DOM, not React state,
+  // and get silently wiped once hydration reconciles the controlled value
+  // back to "" — leaving passcode.length === 0 and the button stuck disabled.
+  useEffect(() => {
+    inputRef.current?.focus();
+  }, []);
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -40,12 +52,12 @@ export default function LoginPage() {
         <p className="mb-8 text-sm text-muted">Enter your passcode</p>
         <form onSubmit={submit} className="flex flex-col gap-3">
           <input
+            ref={inputRef}
             type="password"
             inputMode="numeric"
-            autoFocus
             value={passcode}
             onChange={(e) => setPasscode(e.target.value)}
-            className="w-full rounded-xl border border-border bg-surface px-4 py-3 text-center text-lg tracking-widest text-foreground outline-none focus:border-accent"
+            className="w-full rounded-control border border-border bg-surface px-4 py-3 text-center text-lg tracking-widest text-foreground outline-none focus:border-accent"
             placeholder="••••••"
           />
           {error && (
@@ -54,7 +66,7 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={loading || passcode.length === 0}
-            className="rounded-xl bg-accent px-4 py-3 font-medium text-white disabled:opacity-40"
+            className="rounded-pill bg-accent px-4 py-3 font-medium text-ink disabled:opacity-40"
           >
             {loading ? "…" : "Unlock"}
           </button>

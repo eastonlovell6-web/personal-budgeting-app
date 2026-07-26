@@ -108,7 +108,7 @@ function Dashboard() {
   return (
     <main className="mx-auto flex w-full max-w-md flex-1 flex-col gap-4 px-4 pb-10 safe-top">
       <header className="flex items-center justify-between gap-2 pt-2">
-        <h1 className="text-lg font-semibold">Reports</h1>
+        <h1 className="text-screen-title">Reports</h1>
         <div className="flex items-center gap-2">
           {!empty && <AddAccountButton onLinked={load} />}
           <DateRangePicker value={range} onChange={setRange} />
